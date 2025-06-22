@@ -143,6 +143,7 @@ fun RunScreen(
         snackbarContentState.value = SnackbarContent(
             text = longPressToStopButtonText,
             snackbarDuration = SnackbarDuration.Short,
+            withDismissAction = true,
             actionLabel = null
         )
     }
