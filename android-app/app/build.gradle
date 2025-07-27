@@ -117,7 +117,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
 
     //Dagger - Hilt
-    def daggerHiltVersion = "2.56.2"
+    def daggerHiltVersion = "2.57"
     implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
     kspAndroidTest "com.google.dagger:hilt-android-compiler:$daggerHiltVersion"
     ksp "com.google.dagger:dagger-compiler:$daggerHiltVersion"
