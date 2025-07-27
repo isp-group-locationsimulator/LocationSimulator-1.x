@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE resources [
+    <!ENTITY nbsp "&#160;"><!-- non-breaking space, U+00A0 -->
+]>
 <resources>
     <string name="app_name">Location Simulator</string>
     <string name="homescreen_btn_select_profile">Select Profile</string>
@@ -57,8 +60,8 @@
     <string name="DefaultVibration">Default Vibration</string>
     <string name="DefaultSound">Default Sound</string>
     <string name="infoscreen_license">License</string>
-    <string name="infoscreen_ownLicense">This app is published under the Apache 2.0 license.</string>
-    <string name="infoscreen_usingLicense">This app uses icons that were published under the Apache 2.0 license and under the MIT license.</string>
+    <string name="infoscreen_ownLicense">This app is published under the Apache&nbsp;2.0 license.</string>
+    <string name="infoscreen_usingLicense">This app uses icons that were published under the Apache&nbsp;2.0 license and under the MIT license.</string>
     <string name="Disclaimer">This application is intended for training purposes only. It is not intended for any real-world use and no liability is assumed for any damage that may occur.</string>
     <string name="share_export_using">Share export using…</string>
     <string name="unknown_error">An unknown error has occurred. Sorry about that!</string>

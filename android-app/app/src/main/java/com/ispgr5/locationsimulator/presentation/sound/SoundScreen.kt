@@ -113,11 +113,10 @@ fun SoundScreenScaffold(
                 title = stringResource(id = R.string.ScreenSound)
             )
         }
-    ) {
-        Spacer(modifier = Modifier.height(it.calculateTopPadding()))
+    ) { appPadding ->
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(appPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
