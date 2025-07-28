@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.ispgr5.locationsimulator.presentation.homescreen
 
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -8,10 +11,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,21 +24,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -60,6 +72,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gigamole.composescrollbars.Scrollbars
@@ -77,9 +90,13 @@ import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.util.AppLockBehaviour
 import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.PreferencesKeys
 import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.presentation.util.getActivity
+import com.ispgr5.locationsimulator.presentation.util.getAppPreferences
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -93,14 +110,18 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreenScreen(
     navController: NavController,
+    activity: MainActivity,
     viewModel: HomeScreenViewModel = hiltViewModel(),
+    snackbarHostState: SnackbarHostState,
+    appTheme: MutableState<ThemeState>,
+    snackbarContent: MutableState<SnackbarContent?>,
+    sheetState: SheetState,
+    showBottomSheet: Boolean,
+    appLockBehaviour: MutableState<AppLockBehaviour>,
+    soundStorageManager: SoundStorageManager,
     checkBatteryOptimizationStatus: () -> Boolean,
     batteryOptDisableFunction: () -> Unit,
-    soundStorageManager: SoundStorageManager,
-    activity: MainActivity,
-    appTheme: MutableState<ThemeState>,
-    snackbarHostState: SnackbarHostState,
-    snackbarContent: MutableState<SnackbarContent?>,
+    onToggleSheet: (Boolean) -> Unit
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
@@ -111,6 +132,9 @@ fun HomeScreenScreen(
         homeScreenState = state,
         appTheme = appTheme,
         snackbarHostState = snackbarHostState,
+        sheetState = sheetState,
+        showBottomSheet = showBottomSheet,
+        appLockBehaviour = appLockBehaviour,
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
@@ -168,21 +192,34 @@ fun HomeScreenScreen(
             viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
                 batteryOptDisableFunction()
             })
-        }
+        },
+        onSelectAppLockBehaviour = {
+            context.getActivity()?.getAppPreferences()?.edit {
+                putString(PreferencesKeys.ALLOW_SHOW_WHEN_LOCKED.key, it.name)
+            }
+            appLockBehaviour.value = it
+        },
+        onToggleSheet = onToggleSheet
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenScaffold(
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
     snackbarHostState: SnackbarHostState,
+    appLockBehaviour: MutableState<AppLockBehaviour>,
     onInfoClick: () -> Unit,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
     checkBatteryOptimizationStatus: () -> Boolean,
-    onLaunchBatteryOptimizerDisable: () -> Unit
+    onLaunchBatteryOptimizerDisable: () -> Unit,
+    onSelectAppLockBehaviour: (AppLockBehaviour) -> Unit,
+    sheetState: SheetState,
+    showBottomSheet: Boolean,
+    onToggleSheet: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -191,30 +228,52 @@ fun HomeScreenScaffold(
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
         },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text(stringResource(R.string.app_settings)) },
+                icon = { Icon(Icons.Filled.Settings, null) },
+                containerColor = colorScheme.errorContainer,
+                contentColor = colorScheme.onErrorContainer,
+                onClick = {
+                    onToggleSheet(true)
+                }
+            )
+        },
         content = { appPadding ->
             HomeScreenContent(
                 appPadding = appPadding,
                 homeScreenState = homeScreenState,
+                sheetState = sheetState,
+                showBottomSheet = showBottomSheet,
                 appTheme = appTheme,
+                appLockBehaviour = appLockBehaviour,
                 onSelectProfile = onSelectProfile,
                 onSelectFavourite = onSelectFavourite,
                 onSelectTheme = onSelectTheme,
                 checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
-                onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
+                onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable,
+                onSelectAppLockBehaviour = onSelectAppLockBehaviour,
+                onToggleSheet = onToggleSheet
             )
         })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
     appPadding: PaddingValues,
     homeScreenState: HomeScreenState,
+    sheetState: SheetState,
+    showBottomSheet: Boolean,
     appTheme: MutableState<ThemeState>,
+    appLockBehaviour: MutableState<AppLockBehaviour>,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
     checkBatteryOptimizationStatus: () -> Boolean,
-    onLaunchBatteryOptimizerDisable: () -> Unit
+    onLaunchBatteryOptimizerDisable: () -> Unit,
+    onSelectAppLockBehaviour: (AppLockBehaviour) -> Unit,
+    onToggleSheet: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -247,21 +306,83 @@ fun HomeScreenContent(
                 homeScreenState, onSelectFavourite
             )
         }
+        BottomSheet(
+            showSheet = showBottomSheet,
+            sheetState = sheetState,
+            appTheme = appTheme,
+            appLockBehaviour = appLockBehaviour,
+            onSelectTheme = onSelectTheme,
+            onSelectAppLockBehaviour = onSelectAppLockBehaviour,
+            checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
+            onLaunchBatteryOptimizerDisable = {
+                onToggleSheet(false)
+                onLaunchBatteryOptimizerDisable()
+            },
+            onToggleSheet = onToggleSheet
+        )
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet(
+    showSheet: Boolean,
+    sheetState: SheetState,
+    appTheme: MutableState<ThemeState>,
+    appLockBehaviour: MutableState<AppLockBehaviour>,
+    onSelectTheme: (ThemeState) -> Unit,
+    onSelectAppLockBehaviour: (AppLockBehaviour) -> Unit,
+    checkBatteryOptimizationStatus: () -> Boolean,
+    onLaunchBatteryOptimizerDisable: () -> Unit,
+    onToggleSheet: (Boolean) -> Unit
+) {
+    if (!showSheet) return
+    ModalBottomSheet(
+        onDismissRequest = {
+            onToggleSheet(false)
+        },
+        sheetState = sheetState
+    ) {
         Column(
             modifier = Modifier
-                .padding(top = 8.dp)
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Bottom,
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .padding(horizontal = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            ThemeToggle(appTheme.value, onSetTheme = onSelectTheme)
-            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.app_settings),
+                style = typography.titleLarge.copy(fontSize = typography.titleLarge.fontSize.times(1.3))
+            )
+            ThemeToggle(selectedTheme = appTheme.value, onSetTheme = onSelectTheme)
+            AppLockBehaviourSelector(appLockBehaviour, onSelectAppLockBehaviour)
             BatteryOptimizationHint(
                 checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
                 onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
             )
         }
+    }
+
+}
+
+@Composable
+fun AppLockBehaviourSelector(
+    state: MutableState<AppLockBehaviour>,
+    onSelect: (AppLockBehaviour) -> Unit
+) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+        return // not supported prior to Oreo, so no UI drawn
+    }
+    SettingsCard(
+        titleStringRes = R.string.app_lock_behaviour,
+        subtitleStringRes = R.string.app_lock_behaviour_subtitle
+    ) {
+        MultiStateToggle(
+            stateKeyLabelMap = AppLockBehaviour.entries.associateWith { it.labelStringRes },
+            selectedOption = state.value,
+        ) { onSelect(it) }
     }
 }
 
@@ -317,16 +438,58 @@ fun FavouriteConfigurationCard(
                 .padding(4.dp)
         ) {
             Text(
-                text = configuration.name, style = typography.bodyLarge
+                text = configuration.name, style = typography.titleLarge
             )
             if (configuration.description.isNotBlank()) {
                 Text(
                     text = configuration.description,
-                    style = typography.titleSmall,
+                    style = typography.bodyLarge,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SettingsCard(
+    modifier: Modifier = Modifier,
+    @StringRes titleStringRes: Int,
+    @StringRes subtitleStringRes: Int? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = titleStringRes),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                textAlign = TextAlign.Center,
+                style = typography.titleLarge
+            )
+            if (subtitleStringRes != null) {
+                Text(
+                    text = stringResource(id = subtitleStringRes),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    textAlign = TextAlign.Center,
+                    style = typography.bodyLarge.copy(fontStyle = FontStyle.Italic)
+                )
+            }
+            content()
         }
     }
 }
@@ -342,39 +505,46 @@ private fun BatteryOptimizationHint(
     LaunchedEffect(Unit) {
         while (true) {
             isIgnoringOptimization = checkBatteryOptimizationStatus()
-            delay(5000L)
+            delay(2000L)
         }
     }
     Crossfade(
         targetState = isIgnoringOptimization,
         label = "battery optimization"
     ) { crossfadedIsIgnoringOptimization ->
-        when (crossfadedIsIgnoringOptimization) {
-            true -> {
-                Spacer(Modifier.height(20.dp))
-            }
 
-            else -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.battery_opt_recommendation),
-                        textAlign = TextAlign.Center
-                    )
-                    Button(
+        SettingsCard(
+            titleStringRes = R.string.battery_opt_title,
+            subtitleStringRes = R.string.battery_opt_recommendation
+        ) {
+            when (crossfadedIsIgnoringOptimization) {
+                true -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(
+                            8.dp,
+                            Alignment.CenterHorizontally
+                        )
+                    ) {
+                        Icon(Icons.Default.Cake, null, tint = colorScheme.primary)
+                        Text(stringResource(R.string.successfully_disabled))
+                    }
+                }
+
+                else -> {
+                    ElevatedButton(
                         onClick = onLaunchBatteryOptimizerDisable,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorScheme.secondaryContainer,
-                            contentColor = colorScheme.onSecondaryContainer
+                        colors = ButtonDefaults.elevatedButtonColors(
+                            containerColor = colorScheme.errorContainer,
+                            contentColor = colorScheme.onErrorContainer
                         )
                     ) {
                         Text(text = stringResource(id = R.string.battery_opt_button))
                     }
-                    Spacer(Modifier.height(8.dp))
                 }
-
             }
         }
     }
@@ -384,14 +554,11 @@ private fun BatteryOptimizationHint(
 fun ThemeToggle(
     selectedTheme: ThemeState, onSetTheme: (ThemeState) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = stringResource(id = R.string.homescreen_app_theme),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = colorScheme.onBackground
-        )
-        MultiStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
+    SettingsCard(
+        titleStringRes = R.string.homescreen_app_theme
+    ) {
+        MultiStateToggle(
+            stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
             selectedOption = selectedTheme.themeType,
             onSelectionChange = { newTheme ->
                 onSetTheme(selectedTheme.copy(themeType = newTheme))
@@ -412,27 +579,21 @@ fun DynamicColorSchemeToggle(
     useDynamicColors: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
-    Column(
+    Row(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(top = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
     ) {
-        Text(
-            stringResource(R.string.dynamic_colors),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = colorScheme.onBackground
+        MultiStateToggle(
+            stateKeyLabelMap = mapOf(
+                false to R.string.default_theme,
+                true to R.string.dynamic_theme
+            ),
+            selectedOption = useDynamicColors,
+            onSelectionChange = onSelectionChange
         )
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
-        ) {
-            Text(stringResource(R.string.normal))
-            Switch(checked = useDynamicColors, onCheckedChange = onSelectionChange)
-            Text(stringResource(R.string.dynamic))
-        }
     }
 }
 
@@ -482,12 +643,15 @@ private fun AppTopBar(onInfoClick: () -> Unit) {
 
 @Composable
 fun <K> MultiStateToggle(
-    stateKeyLabelMap: Map<K, Int>, selectedOption: K, onSelectionChange: (K) -> Unit
+    modifier: Modifier = Modifier,
+    stateKeyLabelMap: Map<K, Int>,
+    selectedOption: K,
+    onSelectionChange: (K) -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
         shadowElevation = 4.dp,
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
         color = colorScheme.surfaceContainer
     ) {
         Row(
@@ -496,7 +660,8 @@ fun <K> MultiStateToggle(
                 .background(colorScheme.surfaceContainer)
         ) {
             stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
-                Text(text = stringResource(id = labelStringRes),
+                Text(
+                    text = stringResource(id = labelStringRes),
                     color = when (key == selectedOption) {
                         true -> colorScheme.onPrimary
                         else -> colorScheme.onSurface
@@ -526,6 +691,7 @@ fun <K> MultiStateToggle(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @AppPreview
 fun HomeScreenPreview() {
@@ -544,6 +710,10 @@ fun HomeScreenPreview() {
     val themeState = remember {
         mutableStateOf(PreviewData.themePreviewState)
     }
+    val appLockBehaviour = remember {
+        mutableStateOf(AppLockBehaviour.NORMAL_BEHAVIOUR)
+    }
+    val sheetState = rememberModalBottomSheetState()
     LocationSimulatorTheme {
         HomeScreenScaffold(
             homeScreenState = state,
@@ -554,7 +724,12 @@ fun HomeScreenPreview() {
             onSelectFavourite = {},
             onSelectTheme = {},
             checkBatteryOptimizationStatus = { false },
-            onLaunchBatteryOptimizerDisable = {}
+            onLaunchBatteryOptimizerDisable = {},
+            appLockBehaviour = appLockBehaviour,
+            onSelectAppLockBehaviour = {},
+            onToggleSheet = {},
+            showBottomSheet = false,
+            sheetState = sheetState
         )
     }
 }

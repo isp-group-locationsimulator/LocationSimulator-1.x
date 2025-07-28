@@ -27,10 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewFontScale
-import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,7 +39,6 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timelin
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenPreviewState
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
@@ -62,7 +57,8 @@ fun DelayScreen(
     navController: NavController,
     viewModel: DelayViewModel = hiltViewModel(),
     startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
-    soundsDirUri: String, //the sounds Directory Uri needed for calculating Sound Length
+    soundsDirUri: String,
+    //the sounds Directory Uri needed for calculating Sound Length
 ) {
     //The state from viewmodel
     val state = viewModel.state.value

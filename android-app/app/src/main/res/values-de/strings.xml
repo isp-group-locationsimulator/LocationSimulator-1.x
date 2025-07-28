@@ -29,7 +29,7 @@
     <string name="soundscreen_import">Import</string>
     <string name="soundscreen_record">Aufnahme</string>
     <string name="not_found">Nicht Gefunden</string>
-    <string name="battery_opt_recommendation">Wir empfehlen, die App von der Akkuoptimierung auszuschließen, damit die Simulation nicht ungewollt beendet wird:</string>
+    <string name="battery_opt_recommendation">Wir empfehlen, die App von der Akku-Optimierung auszuschließen, damit die Simulation nicht ungewollt beendet wird.</string>
     <string name="battery_opt_button">Akkuoptimierung deaktivieren</string>
     <string name="soundscreen_dialog_title">Geben Sie einen Namen ein:</string>
     <string name="soundscreen_dialog_button">Bestätigen</string>
@@ -117,4 +117,13 @@
     <string name="dynamic">Dynamisch</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">Die Zurück-Geste ist hier deaktiviert. Bitte verwenden Sie den Zurück-Knopf oben links.</string>
     <string name="new_configuration">Neue Konfiguration</string>
+    <string name="always">Immer</string>
+    <string name="when_running">Bei der Simulation</string>
+    <string name="app_lock_behaviour">App-Sperr-Verhalten</string>
+    <string name="battery_opt_title">Akku-Optimierung</string>
+    <string name="successfully_disabled">Erfolgreich deaktiviert!</string>
+    <string name="app_lock_behaviour_subtitle">Wenn aktiviert, kann (nur!) die App verwendet werden, ohne dass das Gerät entsperrt werden muss. Das kann sehr nützlich sein, wenn Sie ihr Gerät an andere Personen geben.</string>
+    <string name="default_theme">Standard-Farben</string>
+    <string name="dynamic_theme">Dynamische Farben</string>
+    <string name="app_settings">App-Einstellungen</string>
 </resources>

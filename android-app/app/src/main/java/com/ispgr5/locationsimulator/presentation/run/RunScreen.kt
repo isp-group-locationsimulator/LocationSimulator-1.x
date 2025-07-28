@@ -32,9 +32,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -79,7 +77,6 @@ import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePaused
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePlaying
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
 import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
@@ -87,8 +84,6 @@ import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.joda.time.Instant

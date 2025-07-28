@@ -29,7 +29,7 @@
     <string name="soundscreen_import">Import</string>
     <string name="soundscreen_record">Record</string>
     <string name="not_found">Not Found</string>
-    <string name="battery_opt_recommendation">We recommend excluding the app from battery optimization to make sure the simulation doesn\'t randomly stop:</string>
+    <string name="battery_opt_recommendation">We recommend excluding the app from battery optimization to make sure the simulation doesn\'t randomly stop.</string>
     <string name="battery_opt_button">disable battery optimization</string>
     <string name="soundscreen_dialog_title">Enter a name:</string>
     <string name="soundscreen_dialog_button">Confirm</string>
@@ -100,7 +100,7 @@
     <string name="location_simulator_was_originally_created_by">LocationSimulator was originally created by:</string>
     <string name="contact_email" translatable="false">locationsimulator@wiedekopf.net</string>
     <string name="open_source">Open Source</string>
-    <string name="locationsimulator_is_open_source">"LocationSimulator is Open Source Software.\nThe source code of the application is available on GitHub subject to the terms of the Apache 2 license. "</string>
+    <string name="locationsimulator_is_open_source">"LocationSimulator is Open Source Software.\nThe source code of the application is available on GitHub subject to the terms of the Apache&nbsp;2.0 license."</string>
     <string name="github_uri" translatable="false">https://github.com/isp-group-locationsimulator/Location-Simulator-1.x</string>
     <string name="original_development_supported">The original development of LocationSimulator was supported by:</string>
     <string name="mailto_link" translatable="false">mailto:%1$s?body=LocationSimulator%%20Version%%20%2$s</string>
@@ -121,4 +121,13 @@
     <string name="dynamic">Dynamic</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">The back gesture is disabled, please use the button above.</string>
     <string name="new_configuration">New configuration</string>
+    <string name="always">Always</string>
+    <string name="when_running">When running</string>
+    <string name="app_lock_behaviour">App lock behaviour</string>
+    <string name="battery_opt_title">Battery optimization</string>
+    <string name="successfully_disabled">Successfully disabled!</string>
+    <string name="app_lock_behaviour_subtitle">When enabled, the app can be used without unlocking the device. This can be very useful if you pass your phone to someone else.</string>
+    <string name="default_theme">Default theme</string>
+    <string name="dynamic_theme">Dynamic theme</string>
+    <string name="app_settings">App Settings</string>
 </resources>

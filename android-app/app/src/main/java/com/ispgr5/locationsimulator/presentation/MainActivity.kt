@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.ispgr5.locationsimulator.presentation
 
 import android.annotation.SuppressLint
@@ -9,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
@@ -16,23 +19,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -69,10 +75,16 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import javax.inject.Inject
+import androidx.core.net.toUri
+import com.ispgr5.locationsimulator.presentation.util.AppLockBehaviour
+import com.ispgr5.locationsimulator.presentation.util.PreferencesKeys
+import com.ispgr5.locationsimulator.presentation.util.enableShowAppWhenLocked
+import com.ispgr5.locationsimulator.presentation.util.getAppPreferences
 
 val LocalThemeState = compositionLocalOf {
     ThemeState(themeType = ThemeType.AUTO)
 }
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -97,7 +109,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         soundStorageManager = SoundStorageManager(this@MainActivity)
         MainScope().launch {
-            installFilesOnFirstStartup()
+            installFilesOnFirstStartup(getAppPreferences())
         }
         configurationStorageManager = ConfigurationStorageManager(
             mainActivity = this,
@@ -107,18 +119,36 @@ class MainActivity : ComponentActivity() {
             configurationUseCases = configurationUseCases
         )
         val storedThemeType =
-            getSharedPreferences("prefs", MODE_PRIVATE).getString("themeType", ThemeType.LIGHT.name)
+            getAppPreferences().getString(PreferencesKeys.THEME_TYPE.key, ThemeType.LIGHT.name)
                 ?.let {
                     ThemeType.valueOf(it)
                 } ?: ThemeType.LIGHT
         val storedDynamicColors =
-            getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("dynamicColors", false)
+            getAppPreferences().getBoolean(PreferencesKeys.DYNAMIC_COLORS.key, false)
 
-        val themeState = mutableStateOf(
-            ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
-        )
+        val storedAppLockBehaviour = getAppPreferences().getString(
+            PreferencesKeys.ALLOW_SHOW_WHEN_LOCKED.key,
+            AppLockBehaviour.NORMAL_BEHAVIOUR.name
+        )!!.let {
+            AppLockBehaviour.valueOf(it)
+        }
+
+        val appLockBehaviour = mutableStateOf(storedAppLockBehaviour)
+
+        val firstStart = getAppPreferences().getBoolean(PreferencesKeys.FIRST_START.key, true)
+
+        enableShowAppWhenLocked(appLockBehaviour.value, false)
 
         setContent {
+            val sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true
+            )
+            var showBottomSheet by remember { mutableStateOf(firstStart) }
+            val themeState = remember {
+                mutableStateOf(
+                    ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
+                )
+            }
             CompositionLocalProvider(LocalThemeState provides themeState.value) {
                 LocationSimulatorTheme {
                     // A surface container using the 'background' color from the theme
@@ -135,7 +165,11 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             themeState = themeState,
                             snackbarContent = snackbarContent,
-                            powerManager = powerManager
+                            powerManager = powerManager,
+                            appLockBehaviour = appLockBehaviour,
+                            sheetState = sheetState,
+                            showBottomSheet = showBottomSheet,
+                            onToggleSheet = { showBottomSheet = it },
                         )
                     }
                 }
@@ -172,6 +206,10 @@ class MainActivity : ComponentActivity() {
         themeState: MutableState<ThemeState>,
         snackbarContent: MutableState<SnackbarContent?>,
         powerManager: PowerManager,
+        appLockBehaviour: MutableState<AppLockBehaviour>,
+        sheetState: SheetState,
+        showBottomSheet: Boolean,
+        onToggleSheet: (Boolean) -> Unit
     ) {
         val context = LocalContext.current
         val snackbarHostState = remember {
@@ -179,6 +217,7 @@ class MainActivity : ComponentActivity() {
         }
         NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
             composable(Screen.HomeScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 HomeScreenScreen(
                     navController = navController,
                     checkBatteryOptimizationStatus = {
@@ -192,13 +231,19 @@ class MainActivity : ComponentActivity() {
                     activity = this@MainActivity,
                     appTheme = themeState,
                     snackbarHostState = snackbarHostState,
-                    snackbarContent = snackbarContent
+                    snackbarContent = snackbarContent,
+                    appLockBehaviour = appLockBehaviour,
+                    sheetState = sheetState,
+                    onToggleSheet = onToggleSheet,
+                    showBottomSheet = showBottomSheet
                 )
             }
             composable(Screen.InfoScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 InfoScreen(navController = navController)
             }
             composable(route = Screen.SelectScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 SelectScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
@@ -208,6 +253,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screen.AddScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 AddScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
@@ -215,6 +261,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screen.SettingsScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 SettingsScreen(
                     navController = navController,
                     snackbarHostState = snackbarHostState,
@@ -226,6 +273,7 @@ class MainActivity : ComponentActivity() {
                 route = Screen.DelayScreen.route,
                 arguments = listOf(NavigationArguments.configurationId)
             ) {
+                enableShowAppWhenLocked(appLockBehaviour.value, true)
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
@@ -233,19 +281,22 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screen.RunScreen.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, true)
                 RunScreen(
                     navController = navController,
-                    snackbarHostState = snackbarHostState,
                     stopServiceFunction = { stopService() },
+                    snackbarHostState = snackbarHostState
                 )
             }
             composable(Screen.StopService.route) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 navController.navigateUp()
             }
             composable(
                 Screen.EditTimelineScreen.route,
                 arguments = NavigationArguments.allNavArguments
             ) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 EditTimelineScreen(
                     navController = navController,
                     snackbarHostState = snackbarHostState,
@@ -255,6 +306,7 @@ class MainActivity : ComponentActivity() {
             composable(
                 Screen.SoundScreen.route, arguments = listOf(NavigationArguments.configurationId)
             ) {
+                enableShowAppWhenLocked(appLockBehaviour.value, false)
                 SoundScreen(
                     navController = navController,
                     soundStorageManager = soundStorageManager,
@@ -320,8 +372,8 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         if (powerManager.isIgnoringBatteryOptimizations(packageName)) return
         val intent = Intent()
-        intent.action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-        intent.data = Uri.parse("package:$packageName")
+        intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        intent.data = "package:$packageName".toUri()
         startActivity(intent)
     }
 
@@ -366,9 +418,8 @@ class MainActivity : ComponentActivity() {
     /**
      * This function installs the audio files that come with the app.
      */
-    private suspend fun installFilesOnFirstStartup() {
-        val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-        val firstStart: Boolean = preferences.getBoolean("firstStart", true)
+    private suspend fun installFilesOnFirstStartup(preferences: SharedPreferences) {
+        val firstStart: Boolean = preferences.getBoolean(PreferencesKeys.FIRST_START.key, true)
         if (!firstStart) return
         assets.list("sounds")?.forEach { soundName ->
             val extension = MimeTypeMap.getFileExtensionFromUrl(soundName)
@@ -384,9 +435,9 @@ class MainActivity : ComponentActivity() {
             context = this,
             defaultSettings = getDefaultValues()
         )
-        val editor: SharedPreferences.Editor = preferences.edit()
-        editor.putBoolean("firstStart", false)
-        editor.apply()
+        preferences.edit {
+            putBoolean(PreferencesKeys.FIRST_START.key, false)
+        }
     }
 
     /**
@@ -395,22 +446,22 @@ class MainActivity : ComponentActivity() {
      */
     private val saveDefaultValues: (state: State<SettingsState>) -> Unit =
         fun(state: State<SettingsState>) {
-            val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-            val editor: SharedPreferences.Editor = preferences.edit()
-            editor.putInt(PreferencesKeys.MIN_PAUSE_SOUND.name, state.value.minPauseSound)
-            editor.putInt(PreferencesKeys.MAX_PAUSE_SOUND.name, state.value.maxPauseSound)
-            editor.putFloat(PreferencesKeys.MIN_VOL_SOUND.name, state.value.minVolumeSound)
-            editor.putFloat(PreferencesKeys.MAX_VOL_SOUND.name, state.value.maxVolumeSound)
-            editor.putInt(PreferencesKeys.MIN_PAUSE_VIB.name, state.value.minPauseVibration)
-            editor.putInt(PreferencesKeys.MAX_PAUSE_VIB.name, state.value.maxPauseVibration)
-            editor.putInt(PreferencesKeys.MIN_STRENGTH_VIB.name, state.value.minStrengthVibration)
-            editor.putInt(PreferencesKeys.MAX_STRENGTH_VIB.name, state.value.maxStrengthVibration)
-            editor.putInt(PreferencesKeys.MIN_DURATION_VIB.name, state.value.minDurationVibration)
-            editor.putInt(PreferencesKeys.MAX_DURATION_VIB.name, state.value.maxDurationVibration)
-            editor.putString(
-                PreferencesKeys.DEFAULT_NAME_VIB.name, state.value.defaultNameVibration
-            )
-            editor.apply()
+            val preferences: SharedPreferences = getAppPreferences()
+            preferences.edit {
+                putInt(PreferencesKeys.MIN_PAUSE_SOUND.key, state.value.minPauseSound)
+                putInt(PreferencesKeys.MAX_PAUSE_SOUND.key, state.value.maxPauseSound)
+                putFloat(PreferencesKeys.MIN_VOL_SOUND.key, state.value.minVolumeSound)
+                putFloat(PreferencesKeys.MAX_VOL_SOUND.key, state.value.maxVolumeSound)
+                putInt(PreferencesKeys.MIN_PAUSE_VIB.key, state.value.minPauseVibration)
+                putInt(PreferencesKeys.MAX_PAUSE_VIB.key, state.value.maxPauseVibration)
+                putInt(PreferencesKeys.MIN_STRENGTH_VIB.key, state.value.minStrengthVibration)
+                putInt(PreferencesKeys.MAX_STRENGTH_VIB.key, state.value.maxStrengthVibration)
+                putInt(PreferencesKeys.MIN_DURATION_VIB.key, state.value.minDurationVibration)
+                putInt(PreferencesKeys.MAX_DURATION_VIB.key, state.value.maxDurationVibration)
+                putString(
+                    PreferencesKeys.DEFAULT_NAME_VIB.key, state.value.defaultNameVibration
+                )
+            }
         }
 
     /**
@@ -418,36 +469,33 @@ class MainActivity : ComponentActivity() {
      * (in Main Activity because it needs the context)
      */
     private val getDefaultValues: () -> SettingsState = fun(): SettingsState {
-        val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+        val preferences: SharedPreferences = getAppPreferences()
         val startDefaultName = "Vibration"
         return SettingsState(
-            minPauseSound = preferences.getInt(PreferencesKeys.MIN_PAUSE_SOUND.name, 0),
-            maxPauseSound = preferences.getInt(PreferencesKeys.MAX_PAUSE_SOUND.name, 5000),
-            minVolumeSound = preferences.getFloat(PreferencesKeys.MIN_VOL_SOUND.name, 0f),
-            maxVolumeSound = preferences.getFloat(PreferencesKeys.MAX_VOL_SOUND.name, 1f),
+            minPauseSound = preferences.getInt(PreferencesKeys.MIN_PAUSE_SOUND.key, 0),
+            maxPauseSound = preferences.getInt(PreferencesKeys.MAX_PAUSE_SOUND.key, 5000),
+            minVolumeSound = preferences.getFloat(PreferencesKeys.MIN_VOL_SOUND.key, 0f),
+            maxVolumeSound = preferences.getFloat(PreferencesKeys.MAX_VOL_SOUND.key, 1f),
 
-            minPauseVibration = preferences.getInt(PreferencesKeys.MIN_PAUSE_VIB.name, 0),
-            maxPauseVibration = preferences.getInt(PreferencesKeys.MAX_PAUSE_VIB.name, 5000),
-            minStrengthVibration = preferences.getInt(PreferencesKeys.MIN_STRENGTH_VIB.name, 3),
+            minPauseVibration = preferences.getInt(PreferencesKeys.MIN_PAUSE_VIB.key, 0),
+            maxPauseVibration = preferences.getInt(PreferencesKeys.MAX_PAUSE_VIB.key, 5000),
+            minStrengthVibration = preferences.getInt(PreferencesKeys.MIN_STRENGTH_VIB.key, 3),
             maxStrengthVibration = preferences.getInt(
-                PreferencesKeys.MAX_STRENGTH_VIB.name, 255
+                PreferencesKeys.MAX_STRENGTH_VIB.key, 255
             ),
             minDurationVibration = preferences.getInt(
-                PreferencesKeys.MIN_DURATION_VIB.name, 100
+                PreferencesKeys.MIN_DURATION_VIB.key, 100
             ),
             maxDurationVibration = preferences.getInt(
-                PreferencesKeys.MAX_DURATION_VIB.name, 1000
+                PreferencesKeys.MAX_DURATION_VIB.key, 1000
             ),
             defaultNameVibration = preferences.getString(
-                PreferencesKeys.DEFAULT_NAME_VIB.name, startDefaultName
+                PreferencesKeys.DEFAULT_NAME_VIB.key, startDefaultName
             ).toString()
         )
     }
 }
 
-enum class PreferencesKeys {
-    MIN_PAUSE_SOUND, MAX_PAUSE_SOUND, MIN_VOL_SOUND, MAX_VOL_SOUND, MIN_PAUSE_VIB, MAX_PAUSE_VIB, MIN_STRENGTH_VIB, MAX_STRENGTH_VIB, MIN_DURATION_VIB, MAX_DURATION_VIB, DEFAULT_NAME_VIB,
-}
 
 object NavigationArguments {
     val configurationId = navArgument(

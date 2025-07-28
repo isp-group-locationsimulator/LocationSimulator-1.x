@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.PowerManager
 import androidx.activity.compose.setContent
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +18,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.util.AppLockBehaviour
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -39,6 +42,7 @@ class KernfunktionalitaetEndToEndTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnrememberedMutableState")
     @Before
     fun setUp() {
@@ -54,13 +58,21 @@ class KernfunktionalitaetEndToEndTest {
                 val powerManager by remember {
                     mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 }
+                val appLockBehaviour = remember {
+                    mutableStateOf(AppLockBehaviour.NORMAL_BEHAVIOUR)
+                }
+                val sheetState = rememberModalBottomSheetState()
 
                 LocationSimulatorTheme {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         snackbarContent = snackbarContent,
-                        powerManager = powerManager
+                        powerManager = powerManager,
+                        appLockBehaviour = appLockBehaviour,
+                        sheetState = sheetState,
+                        showBottomSheet = false,
+                        onToggleSheet = {}
                     )
                 }
             }
