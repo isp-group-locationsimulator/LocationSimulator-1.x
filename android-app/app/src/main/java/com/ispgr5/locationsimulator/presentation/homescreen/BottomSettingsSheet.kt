@@ -203,6 +203,7 @@ fun LanguageToggle(
         MultiStateToggle(
             stateKeyLabelMap = mapOf(
                 "en-US" to R.string.english,
+                "" to R.string.system_default,
                 "de-DE" to R.string.german
             ),
             selectedOption = currentLocaleList.toLanguageTags()

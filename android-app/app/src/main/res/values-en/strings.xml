@@ -128,4 +128,5 @@
     <string name="english">English</string>
     <string name="german">German</string>
     <string name="app_language">App Language</string>
+    <string name="system_default">System Default</string>
 </resources>

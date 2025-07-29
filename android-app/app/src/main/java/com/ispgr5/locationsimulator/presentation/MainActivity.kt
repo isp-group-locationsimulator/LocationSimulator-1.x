@@ -125,12 +125,12 @@ class MainActivity : AppCompatActivity() {
             configurationUseCases = configurationUseCases
         )
         val storedThemeType =
-            getAppPreferences().getString(PreferencesKeys.THEME_TYPE.key, ThemeType.LIGHT.name)
+            getAppPreferences().getString(PreferencesKeys.THEME_TYPE.key, ThemeType.AUTO.name)
                 ?.let {
                     ThemeType.valueOf(it)
-                } ?: ThemeType.LIGHT
+                } ?: ThemeType.AUTO
         val storedDynamicColors =
-            getAppPreferences().getBoolean(PreferencesKeys.DYNAMIC_COLORS.key, false)
+            getAppPreferences().getBoolean(PreferencesKeys.DYNAMIC_COLORS.key, true)
 
         val storedAppLockBehaviour = getAppPreferences().getString(
             PreferencesKeys.ALLOW_SHOW_WHEN_LOCKED.key,

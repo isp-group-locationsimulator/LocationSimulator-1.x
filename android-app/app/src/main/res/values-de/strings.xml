@@ -127,5 +127,6 @@
     <string name="app_lock_behaviour_only_when_running">Die App wird sich nur auf dem Verzögerungs- und Simulationsbildschirm vor dem Sperrbildschirm anzeigen. Wenn diese Bildschirme verlassen werden, kann sich das Smartphone automatisch sperren, sodass andere Apps nicht aufgerufen werden können.</string>
     <string name="english">Englisch</string>
     <string name="german">Deutsch</string>
-    <string name="app_language">App-Sprache</string>
+    <string name="app_language">App-Sprache</string>\
+    <string name="system_default">System-Standard</string>
 </resources>
