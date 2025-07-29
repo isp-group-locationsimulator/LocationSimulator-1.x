@@ -1,7 +1,7 @@
 package com.ispgr5.locationsimulator.ui.theme
 
-import android.app.Activity
 import android.os.Build
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -10,13 +10,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 import com.ispgr5.locationsimulator.presentation.LocalThemeState
+import com.ispgr5.locationsimulator.presentation.util.getActivity
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -109,14 +105,16 @@ fun LocationSimulatorTheme(
         } else {
             darkScheme
         }
+
         else -> darkScheme
     }
-    val lightTheme = when(currentThemeState.useDynamicColor) {
+    val lightTheme = when (currentThemeState.useDynamicColor) {
         true -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             dynamicLightColorScheme(LocalContext.current)
         } else {
             lightScheme
         }
+
         else -> lightScheme
     }
     val isDarkTheme = when (currentThemeState.themeType) {
@@ -124,20 +122,20 @@ fun LocationSimulatorTheme(
         ThemeType.LIGHT -> false
         else -> systemIsDark
     }
-    Crossfade(targetState = isDarkTheme, label="dark crossfade") { crossfadeDarkTheme ->
-        val colors = when(crossfadeDarkTheme) {
+    Crossfade(targetState = isDarkTheme, label = "dark crossfade") { crossfadeDarkTheme ->
+        val colors = when (crossfadeDarkTheme) {
             true -> darkTheme
             else -> lightTheme
         }
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).apply {
-                    isAppearanceLightStatusBars = crossfadeDarkTheme
-                }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val (appearance, mask) = when (crossfadeDarkTheme) {
+                true -> 0 to APPEARANCE_LIGHT_STATUS_BARS
+                else -> APPEARANCE_LIGHT_STATUS_BARS to APPEARANCE_LIGHT_STATUS_BARS
             }
-        }
+            LocalContext.current.getActivity()?.window?.decorView?.getWindowInsetsController()
+                ?.setSystemBarsAppearance(appearance, mask)
+        };
         MaterialTheme(
             colorScheme = colors,
             typography = AppTypography,
