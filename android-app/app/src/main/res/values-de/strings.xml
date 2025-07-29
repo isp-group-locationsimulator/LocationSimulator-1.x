@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE resources [
-    <!ENTITY nbsp "&#160;"><!-- non-breaking space, U+00A0 -->
-]>
 <resources>
-    <string name="app_name">Ortungssimulator</string>
     <string name="homescreen_btn_select_profile">Musterauswahl</string>
     <string name="editTimeline_AddConfigComponentDialog_Question">Was wollen Sie hinzufügen?</string>
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Vibration hinzufügen</string>
@@ -60,8 +56,8 @@
     <string name="DefaultVibration">Standard-Vibration</string>
     <string name="DefaultSound">Standard-Sound</string>
     <string name="infoscreen_license">Lizenz</string>
-    <string name="infoscreen_ownLicense">Diese App ist unter der Apache&nbsp;2.0-Lizenz veröffentlicht.</string>
-    <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache&nbsp;2.0-Lizenz und unter der MIT-Lizenz veröffentlicht wurden.</string>
+    <string name="infoscreen_ownLicense">Diese App ist unter der Apache&#160;2.0-Lizenz veröffentlicht.</string>
+    <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache&#160;2.0-Lizenz und unter der MIT-Lizenz veröffentlicht wurden.</string>
     <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
     <string name="share_export_using">Export teilen mit…</string>
     <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten, sorry!</string>
@@ -98,7 +94,7 @@
     <string name="maintainer">Wartung und Support</string>
     <string name="location_simulator_is_maintained_by">LocationSimulator wird gewartet durch:</string>
     <string name="location_simulator_was_originally_created_by">LocationSimulator wurde ursprünglich entwickelt durch:</string>
-    <string name="locationsimulator_is_open_source"> LocationSimulator ist <i>Open Source Software</i>.\nDer Quellcode der Anwendung ist auf GitHub unter den Bedingungen der Apache 2-Lizenz verfügbar.</string>
+    <string name="locationsimulator_is_open_source"> LocationSimulator ist <i>Open Source Software</i>.\nDer Quellcode der Anwendung ist auf GitHub unter den Bedingungen der Apache&#160;2.0-Lizenz verfügbar.</string>
     <string name="open_source">Open Source</string>
     <string name="original_development_supported">Die initiale Entwiclung von LocationSimulator wurde unterstützt durch:</string>
     <string name="quick_start">Schnellstart</string>
@@ -126,4 +122,10 @@
     <string name="default_theme">Standard-Farben</string>
     <string name="dynamic_theme">Dynamische Farben</string>
     <string name="app_settings">App-Einstellungen</string>
+    <string name="app_lock_behaviour_normal">Es gibt keine speziellen Ausnahmen für diese App, und das Smartphone wird genau so gesperrt wie bei allen anderen Apps.</string>
+    <string name="app_lock_behaviour_always_show">Die App bleibt auf allen Unter-Bildschirmen geöffnet. Wenn die App verlassen wird, kann sich das Gerät automatisch sperren, sodass alle anderen Apps nicht aufgerufen werden können.</string>
+    <string name="app_lock_behaviour_only_when_running">Die App wird sich nur auf dem Verzögerungs- und Simulationsbildschirm vor dem Sperrbildschirm anzeigen. Wenn diese Bildschirme verlassen werden, kann sich das Smartphone automatisch sperren, sodass andere Apps nicht aufgerufen werden können.</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+    <string name="app_language">App-Sprache</string>
 </resources>

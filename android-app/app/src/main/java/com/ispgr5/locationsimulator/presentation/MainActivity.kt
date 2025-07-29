@@ -9,14 +9,18 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,6 +80,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import javax.inject.Inject
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import com.ispgr5.locationsimulator.presentation.util.AppLockBehaviour
 import com.ispgr5.locationsimulator.presentation.util.PreferencesKeys
 import com.ispgr5.locationsimulator.presentation.util.enableShowAppWhenLocked
@@ -85,9 +90,10 @@ val LocalThemeState = compositionLocalOf {
     ThemeState(themeType = ThemeType.AUTO)
 }
 
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     // With this soundStorageManager we can access the filesystem wherever we want
     private lateinit var soundStorageManager: SoundStorageManager
@@ -149,6 +155,10 @@ class MainActivity : ComponentActivity() {
                     ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
                 )
             }
+            var localeList by remember {
+                mutableStateOf(AppCompatDelegate.getApplicationLocales())
+            }
+            Log.d(TAG, localeList.toLanguageTags())
             CompositionLocalProvider(LocalThemeState provides themeState.value) {
                 LocationSimulatorTheme {
                     // A surface container using the 'background' color from the theme
@@ -170,6 +180,12 @@ class MainActivity : ComponentActivity() {
                             sheetState = sheetState,
                             showBottomSheet = showBottomSheet,
                             onToggleSheet = { showBottomSheet = it },
+                            currentLocaleList = localeList,
+                            setLocaleFromString = {
+                                val newLocaleList = LocaleListCompat.forLanguageTags(it)
+                                localeList = newLocaleList
+                                AppCompatDelegate.setApplicationLocales(newLocaleList)
+                            }
                         )
                     }
                 }
@@ -209,7 +225,9 @@ class MainActivity : ComponentActivity() {
         appLockBehaviour: MutableState<AppLockBehaviour>,
         sheetState: SheetState,
         showBottomSheet: Boolean,
-        onToggleSheet: (Boolean) -> Unit
+        onToggleSheet: (Boolean) -> Unit,
+        currentLocaleList: LocaleListCompat,
+        setLocaleFromString: (String) -> Unit
     ) {
         val context = LocalContext.current
         val snackbarHostState = remember {
@@ -235,7 +253,9 @@ class MainActivity : ComponentActivity() {
                     appLockBehaviour = appLockBehaviour,
                     sheetState = sheetState,
                     onToggleSheet = onToggleSheet,
-                    showBottomSheet = showBottomSheet
+                    showBottomSheet = showBottomSheet,
+                    currentLocaleList = currentLocaleList,
+                    setLocaleFromString = setLocaleFromString
                 )
             }
             composable(Screen.InfoScreen.route) {

@@ -65,6 +65,15 @@
                 android:value="Triggering vibrations and sounds while the app is running, which is the core functionality of the app." />
         </service>
 
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ispgr5.locationsimulator.fileprovider"

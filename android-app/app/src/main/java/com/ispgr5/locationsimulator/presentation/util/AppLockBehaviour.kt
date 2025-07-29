@@ -8,10 +8,19 @@ import com.ispgr5.locationsimulator.R
 
 private const val TAG = "AppLock"
 
-enum class AppLockBehaviour(@StringRes val labelStringRes: Int) {
-    NORMAL_BEHAVIOUR(R.string.normal),
-    ALWAYS_SHOW_WHEN_LOCKED(R.string.always),
-    ONLY_SHOW_LOCKED_WHEN_RUNNING(R.string.when_running)
+enum class AppLockBehaviour(@StringRes val labelStringRes: Int, @StringRes val explanationStringRes: Int) {
+    NORMAL_BEHAVIOUR(
+        labelStringRes = R.string.normal,
+        explanationStringRes = R.string.app_lock_behaviour_normal
+    ),
+    ALWAYS_SHOW_WHEN_LOCKED(
+        labelStringRes = R.string.always,
+        explanationStringRes = R.string.app_lock_behaviour_always_show
+    ),
+    ONLY_SHOW_LOCKED_WHEN_RUNNING(
+        labelStringRes = R.string.when_running,
+        explanationStringRes = R.string.app_lock_behaviour_only_when_running
+    )
 }
 
 fun Activity.enableShowAppWhenLocked(

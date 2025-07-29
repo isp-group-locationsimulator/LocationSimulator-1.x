@@ -53,7 +53,7 @@ fun LocationSimulatorTopBar(
     backPossible: Boolean = true,  // Whether going back should be possible or not
     extraActions: @Composable (RowScope.() -> Unit) = {},
 ) = LocationSimulatorTopBar(
-    onBackClick=onBackClick,
+    onBackClick = onBackClick,
     title = AnnotatedString(title),
     backPossible = backPossible,
     extraActions = extraActions
