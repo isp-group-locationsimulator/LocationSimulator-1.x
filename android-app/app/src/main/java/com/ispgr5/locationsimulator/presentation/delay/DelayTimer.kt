@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -96,7 +97,8 @@ private class DelayCountdownTimer(
 fun DelayTimer(
     timerState: MutableState<TimerState>,
     onFinishTimer: (configurationId: Int) -> Unit,
-    configurationId: Int
+    configurationId: Int,
+    modifier: Modifier = Modifier
 ) {
 
     val timerRunning by remember {
@@ -123,8 +125,10 @@ fun DelayTimer(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp)
             .background(colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -143,9 +147,11 @@ fun DelayTimer(
         }
 
         Row(
-            horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            TimerFlipper(titleText = R.string.TimerHours,
+            TimerFlipper(
+                titleText = R.string.TimerHours,
                 stringValue = timerState.value.stringHours(),
                 timerRunning = timerRunning,
                 onIncrement = { timerState.value = timerState.value.addHours(1) },
@@ -154,7 +160,10 @@ fun DelayTimer(
                 timerState.value = timerState.value.copy(setHours = it.coerceIn(0, 24))
             }
 
-            TimerFlipper(titleText = R.string.TimerMinutes,
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            TimerFlipper(
+                titleText = R.string.TimerMinutes,
                 stringValue = timerState.value.stringMinutes(),
                 timerRunning = timerRunning,
                 onIncrement = { timerState.value = timerState.value.addMinutes(1) },
@@ -162,6 +171,7 @@ fun DelayTimer(
                 timerState.value = timerState.value.copy(setMinutes = it.coerceIn(0, 59))
             }
 
+            Spacer(modifier = Modifier.weight(0.3f))
 
             TimerFlipper(
                 titleText = R.string.TimerSeconds,
@@ -203,7 +213,7 @@ fun DelayTimer(
             enabled = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(vertical = 8.dp)
                 .testTag(TestTags.DELAY_START_BUTTON)
         ) {
             Text(
@@ -216,9 +226,11 @@ fun DelayTimer(
             Button(
                 onClick = {
                     onStartVibration(configurationId, onFinishTimer, timerState, countDownTimer)
-                }, colors = ButtonDefaults.outlinedButtonColors(
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = colorScheme.secondary
-                )
+                ),
+                modifier = Modifier.fillMaxWidth()
 
             ) {
                 Text(
@@ -240,12 +252,14 @@ fun RowScope.TimerFlipper(
     onDecrement: () -> Unit,
     onSetValue: (Long) -> Unit
 ) = Column(
-    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.weight(1f)
 ) {
     Text(
         text = stringResource(id = titleText),
         color = colorScheme.onBackground,
-        style = TextStyle(fontSize = 20.sp)
+        style = TextStyle(fontSize = 20.sp, textAlign = TextAlign.Center),
+        modifier = Modifier.fillMaxWidth()
     )
     Button(
         onClick = onIncrement,
@@ -253,7 +267,7 @@ fun RowScope.TimerFlipper(
         enabled = !timerRunning,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(vertical = 4.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
@@ -269,7 +283,7 @@ fun RowScope.TimerFlipper(
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         readOnly = timerRunning,
         textStyle = TextStyle(
             textAlign = TextAlign.Center, fontSize = 30.sp
@@ -281,7 +295,7 @@ fun RowScope.TimerFlipper(
         enabled = !timerRunning,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(vertical = 4.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),

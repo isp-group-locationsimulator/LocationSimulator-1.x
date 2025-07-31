@@ -345,12 +345,7 @@ fun AppLockBehaviourIndicator(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
-            val imageVector = when (behaviour.value) {
-                AppLockBehaviour.NORMAL_BEHAVIOUR -> Icons.Default.Lock
-                AppLockBehaviour.ALWAYS_SHOW_WHEN_LOCKED -> Icons.Default.LockOpen
-                AppLockBehaviour.ONLY_SHOW_LOCKED_WHEN_RUNNING -> Icons.Default.LockClock
-            }
-            Icon(imageVector, null, tint = colorScheme.onSurface)
+            Icon(behaviour.value.icon, null, tint = colorScheme.onSurface)
             Text(buildAnnotatedString {
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(stringResource(R.string.app_lock_behaviour))
@@ -414,17 +409,21 @@ fun FavouriteConfigurationCard(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = configuration.name, style = typography.titleLarge
+                text = configuration.name,
+                style = typography.titleLarge.copy(textAlign = TextAlign.Center),
+                modifier = Modifier.fillMaxWidth()
             )
             if (configuration.description.isNotBlank()) {
                 Text(
                     text = configuration.description,
-                    style = typography.bodyLarge,
+                    style = typography.bodyLarge.copy(textAlign = TextAlign.Center),
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -437,7 +436,8 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
     Button(
         onClick = onButtonClick,
         modifier = Modifier
-            .fillMaxWidth(0.8f)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
     ) {
         Text(

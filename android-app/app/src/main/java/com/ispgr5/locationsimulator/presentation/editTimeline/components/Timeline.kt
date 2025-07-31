@@ -60,7 +60,8 @@ fun Timeline(
     selectedComponent: ConfigComponent?,
     onSelectAComponent: ((ConfigComponent) -> Unit)?,
     onAddClicked: (() -> Unit)?,
-    interactive: Boolean = true
+    interactive: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
 
     val scrollState = rememberScrollState()
@@ -77,7 +78,7 @@ fun Timeline(
 
     //iterate through all Configuration components and Display it with a TimelineItem
     Column(
-        Modifier
+        modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
     ) {

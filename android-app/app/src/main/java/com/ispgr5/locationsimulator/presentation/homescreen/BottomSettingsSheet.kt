@@ -82,9 +82,11 @@ fun BottomSheet(
         },
         modifier = Modifier.nestedScroll(connection = nestedScroll, dispatcher = null),
     ) {
-        Row(modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -177,6 +179,7 @@ fun ThemeToggle(
     ) {
         MultiStateToggle(
             stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
+            stateKeyIconMap = ThemeType.entries.associateWith { themeType -> themeType.icon },
             selectedOption = selectedTheme.themeType,
             onSelectionChange = { newTheme ->
                 onSetTheme(selectedTheme.copy(themeType = newTheme))
@@ -250,6 +253,7 @@ fun AppLockBehaviourSelector(
     ) {
         MultiStateToggle(
             stateKeyLabelMap = AppLockBehaviour.entries.associateWith { it.labelStringRes },
+            stateKeyIconMap = AppLockBehaviour.entries.associateWith { it.icon },
             selectedOption = state.value,
         ) { onSelect(it) }
         Text(

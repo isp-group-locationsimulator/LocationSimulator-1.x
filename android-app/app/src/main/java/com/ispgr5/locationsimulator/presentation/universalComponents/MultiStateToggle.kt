@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,6 +59,7 @@ fun MultiStateTogglePreview() {
 fun <K> MultiStateToggle(
     modifier: Modifier = Modifier,
     stateKeyLabelMap: Map<K, Int>,
+    stateKeyIconMap: Map<K, ImageVector>? = null,
     selectedOption: K,
     onSelectionChange: (K) -> Unit
 ) {
@@ -73,9 +76,9 @@ fun <K> MultiStateToggle(
                 .background(colorScheme.surfaceContainer)
         ) {
             stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
-                Column(
+                Row(
                     modifier = Modifier
-                        .clip(shape = RoundedCornerShape(24.dp))
+                        .clip(shape = RoundedCornerShape(8.dp))
                         .fillMaxHeight()
                         .clickable {
                             onSelectionChange(key)
@@ -95,11 +98,18 @@ fun <K> MultiStateToggle(
                             vertical = 8.dp,
                             horizontal = 16.dp,
                         ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    if (stateKeyIconMap != null) {
+                        stateKeyIconMap[key]?.let { icon ->
+                            Icon(icon, null, tint = when(key) {
+                                selectedOption -> colorScheme.onPrimary
+                                else -> colorScheme.onSurface
+                            })
+                        }
+                    }
                     Text(
-
                         text = stringResource(id = labelStringRes),
                         textAlign = TextAlign.Center,
                         color = when (key == selectedOption) {

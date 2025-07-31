@@ -33,7 +33,7 @@ object AppModule {
 			ConfigurationDatabase::class.java,
 			ConfigurationDatabase.DATABASE_NAME
 		)
-			.fallbackToDestructiveMigration()
+			.fallbackToDestructiveMigration(true)
 			.addTypeConverter(ConfigurationComponentRoomConverter())
 			.build()
 	}

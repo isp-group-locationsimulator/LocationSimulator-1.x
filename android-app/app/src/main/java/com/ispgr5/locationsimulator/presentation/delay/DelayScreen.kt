@@ -3,6 +3,7 @@ package com.ispgr5.locationsimulator.presentation.delay
 import android.content.Context
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,48 +142,54 @@ fun DelayScreenContent(
             .testTag(TestTags.DELAY_MAIN_COLUMN),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.size(8.dp))
 
-        Text(
-            text = configuration.name,
-            style = TextStyle(fontSize = 24.sp),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Clip,
+        ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        if (configuration.description.isNotBlank()) {
-            HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = configuration.description,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
+                .padding(vertical = 4.dp, horizontal = 8.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = colorScheme.surfaceContainerHigh,
+                contentColor = colorScheme.onSurface
+            ),
+            shape = shapes.small
+        ) {
+            Column(
+                Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = configuration.name,
+                    style = typography.titleLarge.copy(textAlign = TextAlign.Center),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (configuration.description.isNotBlank()) {
+                    Text(
+                        text = configuration.description,
+                        style = typography.bodyLarge.copy(textAlign = TextAlign.Center),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
 
         /**
          * The Timeline
          */
-        Spacer(modifier = Modifier.size(8.dp))
-        HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
-        Spacer(modifier = Modifier.size(8.dp))
+        HorizontalDivider(
+            color = colorScheme.primary, thickness = 1.dp,
+            modifier = Modifier.padding(vertical = 5.dp)
+        )
 
         Timeline(
             components = configuration.components,
             selectedComponent = null,
             onSelectAComponent = null,
             onAddClicked = {},
-            interactive = false
+            interactive = false,
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
-
-        Spacer(modifier = Modifier.size(5.dp))
 
         val minDuration = configuration.getMinDuration(context, soundsDirUri)
         val maxDuration = configuration.getMaxDuration(context, soundsDirUri)
@@ -190,17 +201,20 @@ fun DelayScreenContent(
             maxDuration.millisToSeconds().toString()
         )
 
-        Text(runtimeString)
+        Text(runtimeString, modifier = Modifier.padding(top = 4.dp))
 
-        Spacer(modifier = Modifier.size(3.dp))
-        HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
-        Spacer(modifier = Modifier.size(8.dp))
+        HorizontalDivider(
+            color = colorScheme.primary,
+            thickness = 1.dp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
 
         //The timer component
         DelayTimer(
             timerState = timerState,
             configurationId = configuration.id!!,
-            onFinishTimer = onFinishTimer
+            onFinishTimer = onFinishTimer,
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
 }

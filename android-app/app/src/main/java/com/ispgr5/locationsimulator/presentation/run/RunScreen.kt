@@ -6,7 +6,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +53,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -357,7 +362,8 @@ fun StopButton(interactionSource: MutableInteractionSource) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(interactionSource = interactionSource,
+        Button(
+            interactionSource = interactionSource,
             modifier = Modifier.height(IntrinsicSize.Min),
             onClick = {}) {
             Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
@@ -486,16 +492,14 @@ fun PlayingStateUi(
                 Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(vertical = 8.dp),
+                    .padding(8.dp),
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = colorScheme.surfaceContainer,
                     contentColor = colorScheme.onSurface
                 )
             ) {
                 Column(
-                    modifier = Modifier
-                        .weight(5f)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     when (playingEffect) {
@@ -512,7 +516,7 @@ fun PlayingStateUi(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(8.dp),
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = colorScheme.surfaceContainer,
                     contentColor = colorScheme.onSurface
@@ -562,20 +566,28 @@ fun EffectProgressBar(
     progressBarProgress: () -> Float, isInPause: Boolean
 ) {
     Row(
-        modifier = Modifier.wrapContentHeight(Alignment.Bottom),
+        modifier = Modifier
+            .wrapContentHeight(Alignment.Bottom)
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
+        val animatedValue by animateFloatAsState(
+            targetValue = progressBarProgress(),
+            // animate the progress bar value to smoothen the movement a bit
+            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+        )
         LinearProgressIndicator(
-            progress = progressBarProgress,
+            progress = { animatedValue },
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.7f)
-                .padding(8.dp),
+                .height(10.dp)
+                .padding(horizontal = 8.dp),
             color = when (isInPause) {
                 true -> colorScheme.secondary.copy(alpha = 0.4f)
                 else -> colorScheme.secondary
-            }
-        )
+            },
+
+            )
     }
 }
 
@@ -586,9 +598,9 @@ fun EffectPreviewUi(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val drawable = when (effectState) {
@@ -604,9 +616,7 @@ fun EffectPreviewUi(
         )
         ranges.forEach { range ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -635,7 +645,7 @@ fun RefRangeIndicator(modifier: Modifier = Modifier, range: RefRangeValue) {
         if (progress != null) {
             LinearProgressIndicator(
                 modifier = Modifier
-                    .height(3.dp)
+                    .height(6.dp)
                     .fillMaxWidth(boxWeight.weight),
                 progress = { progress.setScale(2).toFloat() }
             )
@@ -660,7 +670,8 @@ fun RefRangeIndicator(modifier: Modifier = Modifier, range: RefRangeValue) {
 @Composable
 fun SoundUi(effectState: EffectParameters.Sound, iconSize: Dp) {
     val original = (effectState.original as ConfigComponent.Sound)
-    val volumeRange = RefRangeValue(value = effectState.volume.toBigDecimal() * 100.toBigDecimal(),
+    val volumeRange = RefRangeValue(
+        value = effectState.volume.toBigDecimal() * 100.toBigDecimal(),
         lower = original.minVolume.toBigDecimal() * 100.toBigDecimal(),
         upper = original.maxVolume.toBigDecimal() * 100.toBigDecimal(),
         label = R.string.editTimeline_SoundVolume,
@@ -676,17 +687,24 @@ fun SoundUi(effectState: EffectParameters.Sound, iconSize: Dp) {
         })
 
     val pauseRange = buildPauseRange(effectState, original)
-    Text(effectState.soundName, style = typography.titleSmall)
-    EffectPreviewUi(
-        effectState = effectState, ranges = listOf(volumeRange, pauseRange), iconSize = iconSize
-    )
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+    ) {
+        Text(effectState.soundName, style = typography.titleSmall)
+        EffectPreviewUi(
+            effectState = effectState, ranges = listOf(volumeRange, pauseRange), iconSize = iconSize
+        )
+    }
 }
 
 @Composable
 fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
     val original = effectState.original as ConfigComponent.Vibration
     val strengthRange = when {
-        LocalContext.current.vibratorHasAmplitudeControlAndReason.first -> RefRangeValue(value = effectState.strength.toBigDecimal(),
+        LocalContext.current.vibratorHasAmplitudeControlAndReason.first -> RefRangeValue(
+            value = effectState.strength.toBigDecimal(),
             lower = original.minStrength.toBigDecimal(),
             upper = original.maxStrength.toBigDecimal(),
             label = R.string.editTimeline_Vibration_Strength,
@@ -703,7 +721,8 @@ fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
 
         else -> null
     }
-    val durationRange = RefRangeValue(value = effectState.durationMillis.toBigDecimal(),
+    val durationRange = RefRangeValue(
+        value = effectState.durationMillis.toBigDecimal(),
         lower = original.minDuration.toBigDecimal(),
         upper = original.maxDuration.toBigDecimal(),
         label = R.string.editTimeline_Vibration_duration,
@@ -730,21 +749,22 @@ fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
 fun buildPauseRange(
     effectState: EffectParameters, original: ConfigComponent
 ): RefRangeValue {
-    return RefRangeValue(effectState.pauseMillis.toBigDecimal(), lower = when (original) {
-        is ConfigComponent.Sound -> original.minPause
-        is ConfigComponent.Vibration -> original.minPause
-    }.toBigDecimal(), upper = when (original) {
-        is ConfigComponent.Sound -> original.maxPause
-        is ConfigComponent.Vibration -> original.maxPause
-    }.toBigDecimal(), label = R.string.editTimeline_Pause, breakpoints = { width ->
-        when (width.millisToSeconds().setScale(0, RoundingMode.FLOOR).toLong()) {
-            in 0..10 -> RefRangeValue.Breakpoint.SMALL
-            in 10..20 -> RefRangeValue.Breakpoint.MEDIUM
-            else -> RefRangeValue.Breakpoint.LARGE
-        }
-    }, formatValue = {
-        "${it.millisToSeconds()} s"
-    })
+    return RefRangeValue(
+        effectState.pauseMillis.toBigDecimal(), lower = when (original) {
+            is ConfigComponent.Sound -> original.minPause
+            is ConfigComponent.Vibration -> original.minPause
+        }.toBigDecimal(), upper = when (original) {
+            is ConfigComponent.Sound -> original.maxPause
+            is ConfigComponent.Vibration -> original.maxPause
+        }.toBigDecimal(), label = R.string.editTimeline_Pause, breakpoints = { width ->
+            when (width.millisToSeconds().setScale(0, RoundingMode.FLOOR).toLong()) {
+                in 0..10 -> RefRangeValue.Breakpoint.SMALL
+                in 10..20 -> RefRangeValue.Breakpoint.MEDIUM
+                else -> RefRangeValue.Breakpoint.LARGE
+            }
+        }, formatValue = {
+            "${it.millisToSeconds()} s"
+        })
 }
 
 
@@ -752,7 +772,7 @@ fun buildPauseRange(
 fun PausedUi(currentPauseDuration: Long, iconSize: Dp) {
     Column(
         Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -776,9 +796,10 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
         Modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Text(stringResource(id = R.string.next_effect), style = typography.titleMedium)
+        Text(stringResource(id = R.string.next_effect), style = typography.titleLarge)
         when (nextEffect) {
             is EffectParameters.Vibration -> VibrationUi(nextEffect, iconSize)
             is EffectParameters.Sound -> SoundUi(nextEffect, iconSize)

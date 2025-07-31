@@ -135,7 +135,7 @@ fun LocationSimulatorTheme(
             }
             LocalContext.current.getActivity()?.window?.decorView?.getWindowInsetsController()
                 ?.setSystemBarsAppearance(appearance, mask)
-        };
+        }
         MaterialTheme(
             colorScheme = colors,
             typography = AppTypography,
