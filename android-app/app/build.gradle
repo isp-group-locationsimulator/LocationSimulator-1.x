@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -10,27 +12,28 @@ plugins {
 }
 
 android {
-    namespace 'com.ispgr5.locationsimulator'
-    compileSdk 36
+    namespace = 'com.ispgr5.locationsimulator'
 
     defaultConfig {
-        applicationId "com.ispgr5.locationsimulator"
-        minSdk 21
-        targetSdk 36
-        versionCode 20
-        versionName "1.2.0"
+        applicationId = "com.ispgr5.locationsimulator"
+        minSdk = 21
+        targetSdk = 36
+        compileSdk = 36
+
+        versionName = "1.2.1"
+        versionCode = 21
 
         testInstrumentationRunner "com.ispgr5.locationsimulator.HiltTestRunner"
         vectorDrawables {
-            useSupportLibrary true
+            useSupportLibrary = true
         }
         resourceConfigurations += ["en", "de"]
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            debuggable false
+            minifyEnabled = true
+            debuggable = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -38,33 +41,31 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility =  JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-
-        jvmTarget = '17'
-        freeCompilerArgs += [
-                //for OptIn ExperimentalAnimationApi and other @OptIn statements
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xannotation-default-target=param-property"
-        ]
+    kotlin {
+        compilerOptions {
+            setJvmTarget(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        }
     }
     buildFeatures {
-        compose true
-        buildConfig true // migrated from gradle.properties in AGP 8.x upgrade
+        compose = true
+        buildConfig = true // migrated from gradle.properties in AGP 8.x upgrade
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace 'com.ispgr5.locationsimulator'
+    namespace = 'com.ispgr5.locationsimulator'
 }
 
 dependencies {
-    def composeVersion = "2025.07.00"
-    def lifecycleVersion = "2.9.2"
+    def composeVersion = "2025.08.01"
+    def lifecycleVersion = "2.9.3"
     def roomVersion = "2.7.2"
     // the BOM dependency is responsible for the version of compose we use
     implementation platform("androidx.compose:compose-bom:$composeVersion")
@@ -79,14 +80,14 @@ dependencies {
     implementation 'androidx.compose.material3:material3'
 
     implementation "androidx.activity:activity-ktx:1.10.1"
-    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.core:core-ktx:1.17.0'
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
-    implementation "androidx.compose.runtime:runtime-livedata:1.8.3"
+    implementation "androidx.compose.runtime:runtime-livedata:1.9.0"
     implementation "androidx.lifecycle:lifecycle-service:$lifecycleVersion"
 
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.8.3"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.9.0"
     debugImplementation "androidx.compose.ui:ui-tooling"
     debugImplementation "androidx.compose.ui:ui-test-manifest"
 
@@ -98,7 +99,7 @@ dependencies {
     testImplementation "com.google.truth:truth:1.4.4"
     testImplementation "com.squareup.okhttp3:mockwebserver:5.1.0"
     testImplementation "io.mockk:mockk:1.14.5"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.8.3"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.9.0"
     testImplementation 'org.json:json:20250517'
 
     // Instrumentation tests
@@ -119,7 +120,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 
     //Dagger - Hilt
-    def daggerHiltVersion = "2.57"
+    def daggerHiltVersion = "2.57.1"
     implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
     kspAndroidTest "com.google.dagger:hilt-android-compiler:$daggerHiltVersion"
     ksp "com.google.dagger:dagger-compiler:$daggerHiltVersion"
