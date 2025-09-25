@@ -64,7 +64,7 @@ android {
 }
 
 dependencies {
-    def composeVersion = "2025.08.01"
+    def composeVersion = "2025.09.01"
     def lifecycleVersion = "2.9.3"
     def roomVersion = "2.7.2"
     // the BOM dependency is responsible for the version of compose we use
