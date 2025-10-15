@@ -27,7 +27,7 @@ class EditTimelineViewModel @Inject constructor(
 ) : ViewModel() {
 
     //The provided state for the View
-    private val _state = mutableStateOf(EditTimelineState())
+    private val _state = mutableStateOf(EditTimelineState(-1))
     val state: State<EditTimelineState> = _state
 
     //The current Configuration Id to override the Configuration with same id in Database
@@ -61,9 +61,7 @@ class EditTimelineViewModel @Inject constructor(
                                         minPause!!,
                                         maxPause!!
                                     )
-                                    componentsCopy.add(
-                                        newSound!!
-                                    )
+                                    componentsCopy.add(newSound)
                                     configurationUseCases.addConfiguration(
                                         Configuration(
                                             id = configurationId,
@@ -79,6 +77,7 @@ class EditTimelineViewModel @Inject constructor(
                             }
                             currentConfigurationId = configuration.id
                             _state.value = _state.value.copy(
+                                id = configuration.id!!,
                                 name = configuration.name,
                                 description = configuration.description,
                                 randomOrderPlayback = configuration.randomOrderPlayback,
@@ -128,14 +127,14 @@ class EditTimelineViewModel @Inject constructor(
                     var component = state.value.current!!.copy()
                     component = when (component) {
                         is ConfigComponent.Sound -> {
-                            (component as ConfigComponent.Sound).myCopy(
+                            component.myCopy(
                                 minPause = RangeConverter.sToMs(event.range.start),
                                 maxPause = RangeConverter.sToMs(event.range.endInclusive)
                             )
                         }
 
                         is ConfigComponent.Vibration -> {
-                            (component as ConfigComponent.Vibration).myCopy(
+                            component.myCopy(
                                 minPause = RangeConverter.sToMs(event.range.start),
                                 maxPause = RangeConverter.sToMs(event.range.endInclusive)
                             )
@@ -156,7 +155,7 @@ class EditTimelineViewModel @Inject constructor(
                     var component = state.value.current!!.copy()
                     when (component) {
                         is ConfigComponent.Vibration -> {
-                            component = (component as ConfigComponent.Vibration).myCopy(
+                            component = component.myCopy(
                                 minStrength = RangeConverter.floatToEightBitInt(event.range.start),
                                 maxStrength = RangeConverter.floatToEightBitInt(event.range.endInclusive)
                             )
@@ -179,7 +178,7 @@ class EditTimelineViewModel @Inject constructor(
                     var component = state.value.current!!.copy()
                     when (component) {
                         is ConfigComponent.Vibration -> {
-                            component = (component as ConfigComponent.Vibration).myCopy(
+                            component = component.myCopy(
                                 minDuration = RangeConverter.sToMs(event.range.start),
                                 maxDuration = RangeConverter.sToMs(event.range.endInclusive)
                             )
@@ -202,13 +201,13 @@ class EditTimelineViewModel @Inject constructor(
                     var component = state.value.current!!.copy()
                     component = when (component) {
                         is ConfigComponent.Vibration -> {
-                            (component as ConfigComponent.Vibration).myCopy(
+                            component.myCopy(
                                 name = event.name
                             )
                         }
 
                         is ConfigComponent.Sound -> {
-                            (component as ConfigComponent.Sound).myCopy(
+                            component.myCopy(
                                 name = event.name
                             )
                         }
@@ -326,13 +325,13 @@ class EditTimelineViewModel @Inject constructor(
                     var component = state.value.current!!.copy()
                     component = when (component) {
                         is ConfigComponent.Vibration -> {
-                            (component as ConfigComponent.Vibration).myCopy(
+                            component.myCopy(
                                 id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
                             )
                         }
 
                         is ConfigComponent.Sound -> {
-                            (component as ConfigComponent.Sound).myCopy(
+                            component.myCopy(
                                 id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
                             )
                         }

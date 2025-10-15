@@ -27,7 +27,7 @@ fun ClickableLink(
                 addLink(
                     url = LinkAnnotation.Url(urlTarget),
                     start = 0,
-                    end = text.length -1
+                    end = text.length
                 )
             }
         }

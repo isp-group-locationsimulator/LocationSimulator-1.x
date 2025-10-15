@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +31,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.presentation.NavigationArguments
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.VibrationSupportHintMode
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.editTimelineState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
@@ -61,11 +66,14 @@ fun EditTimelineScreen(
     getDefaultValuesFunction: () -> SettingsState
 ) {
     val state = viewModel.state.value
+
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
     val snackbarContentState = remember {
         mutableStateOf<SnackbarContent?>(null)
     }
+
+
 
     RenderSnackbarOnChange(snackbarHostState, snackbarContentState)
 
@@ -115,6 +123,9 @@ fun EditTimelineScreen(
         onSettingsClick = {
             navController.navigate(route = Screen.SettingsScreen.route)
         },
+        onStartClick = {
+            navController.navigate(route = Screen.DelayScreen.createRoute(configurationId = state.id))
+        },
         onToggleShowDialog = {
             showCustomDialogWithResult = !showCustomDialogWithResult
         },
@@ -152,6 +163,7 @@ fun EditTimelineScaffold(
     isDialogShown: Boolean,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onStartClick: () -> Unit,
     onToggleShowDialog: (Boolean) -> Unit,
     onChangeName: (String) -> Unit,
     onChangeDescription: (String) -> Unit,
@@ -164,7 +176,7 @@ fun EditTimelineScaffold(
 ) {
     Scaffold(
         topBar = {
-            EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
+            EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick, onStartClick = onStartClick)
         },
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
@@ -291,12 +303,23 @@ private fun ConfigMetadata(
 }
 
 @Composable
-fun EditTimelineTopBar(onBackClick: () -> Unit, onSettingsClick: () -> Unit) {
+fun EditTimelineTopBar(
+    onBackClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onStartClick: () -> Unit
+) {
     LocationSimulatorTopBar(
         onBackClick = onBackClick,
         title = stringResource(id = R.string.ScreenEdit),
         extraActions = {
-            //The Add Button
+            IconButton(
+                onClick = onStartClick
+            ) {
+                Icon(
+                    Icons.Default.PlayArrow,
+                    contentDescription = stringResource(R.string.start)
+                )
+            }
             IconButton(
                 onClick = onSettingsClick,
             ) {
@@ -336,6 +359,7 @@ fun EditTimelinePreviewScaffold(
             snackbarHostState = snackbarHostState,
             isDialogShown = isDialogShown,
             onBackClick = {},
+            onStartClick = {},
             onSettingsClick = {},
             onToggleShowDialog = {},
             onChangeName = {},

@@ -9,14 +9,12 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
@@ -61,8 +59,8 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
-import com.ispgr5.locationsimulator.presentation.run.ServiceIntentKeys
-import com.ispgr5.locationsimulator.presentation.run.SimulationService
+import com.ispgr5.locationsimulator.service.ServiceIntentKeys
+import com.ispgr5.locationsimulator.service.SimulationService
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
@@ -389,7 +387,6 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("BatteryLife") // We need to have the Service run in the background as long as the user wants. The app only runs, when the user explicitly hits start.
     private fun disableBatteryOptimization(powerManager: PowerManager) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         if (powerManager.isIgnoringBatteryOptimizations(packageName)) return
         val intent = Intent()
         intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS

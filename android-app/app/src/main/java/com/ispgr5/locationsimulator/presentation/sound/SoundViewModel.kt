@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.presentation.run.SoundPlayer
+import com.ispgr5.locationsimulator.service.SoundPlayer
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

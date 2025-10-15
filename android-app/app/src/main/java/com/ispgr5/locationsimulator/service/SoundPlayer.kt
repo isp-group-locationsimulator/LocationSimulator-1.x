@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.run
+package com.ispgr5.locationsimulator.service
 
 import android.media.MediaPlayer
 

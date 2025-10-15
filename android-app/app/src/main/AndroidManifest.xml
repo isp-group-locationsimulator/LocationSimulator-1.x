@@ -55,7 +55,7 @@
         </activity>
 
         <service
-            android:name=".presentation.run.SimulationService"
+            android:name=".service.SimulationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse"

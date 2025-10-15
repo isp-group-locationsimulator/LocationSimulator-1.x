@@ -43,8 +43,6 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLi
 import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLinkDefaults
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 /**
  * The Info Screen that shows Information about the developers and similar things.

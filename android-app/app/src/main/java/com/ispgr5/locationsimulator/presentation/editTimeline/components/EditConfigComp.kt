@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,9 +27,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +54,7 @@ import com.gigamole.composescrollbars.config.ScrollbarsOrientation
 import com.gigamole.composescrollbars.rememberScrollbarsState
 import com.gigamole.composescrollbars.scrolltype.ScrollbarsScrollType
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.R.string.test_minimum_vibration
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
@@ -58,8 +64,14 @@ import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.ThemePreview
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
+import com.ispgr5.locationsimulator.service.EffectParameters
+import com.ispgr5.locationsimulator.service.VibrationPlayer
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.joda.time.Instant
 import java.util.Locale
 
 /**
@@ -90,6 +102,12 @@ fun EditConfigComponent(
         config = ScrollbarsConfig(orientation = ScrollbarsOrientation.Vertical),
         scrollType = ScrollbarsScrollType.Scroll(state = scrollState)
     )
+
+    val context = LocalContext.current
+
+    val vibrationPlayer by remember {
+        mutableStateOf(VibrationPlayer(context))
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -148,15 +166,19 @@ fun EditConfigComponent(
 
 
             Column(
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)) {
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 when (configComponent) {
                     is ConfigComponent.Sound -> {
                         SoundParameters(configComponent, blackSubtitle1, editTimelineEventHandlers)
                     }
 
                     is ConfigComponent.Vibration -> {
+                        VibrationTestButton(vibrationPlayer, configComponent)
                         VibrationParameters(
                             vibrationSupportHintMode,
                             configComponent,
@@ -218,7 +240,7 @@ fun EditConfigComponent(
         Scrollbars(state = scrollbarsState)
     }
 
-//Dialog to confirm the deleting of an config Component
+    //Dialog to confirm the deleting of an config Component
     val revShowDialog = fun() { showDeleteConfirmDialog = !showDeleteConfirmDialog }
     if (showDeleteConfirmDialog) {
         ConfirmDeleteDialog(onDismiss = revShowDialog) {
@@ -252,6 +274,58 @@ fun EditConfigComponent(
 }
 
 @Composable
+fun VibrationTestButton(
+    vibrationPlayer: VibrationPlayer,
+    configComponent: ConfigComponent.Vibration
+) {
+    var isPlaying by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    Button(
+        modifier = Modifier.fillMaxWidth(0.9f), onClick = {
+            if (isPlaying) {
+                vibrationPlayer.cancel()
+                isPlaying = false
+            } else {
+                val now = Instant.now()
+                isPlaying = true
+                vibrationPlayer.playVibrationEffect(
+                    EffectParameters.Vibration(
+                        startAt = now,
+                        durationMillis = configComponent.minDuration.toLong(),
+                        pauseMillis = configComponent.minPause.toLong(),
+                        strength = configComponent.minStrength.coerceAtLeast(1),
+                        original = configComponent
+                    )
+                )
+                scope.launch {
+                    delay(configComponent.minDuration.toLong())
+                    isPlaying = false
+                }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(
+            contentColor = when (isPlaying) {
+                true -> colorScheme.onPrimaryContainer
+                else -> colorScheme.onSecondaryContainer
+            },
+            containerColor = when (isPlaying) {
+                true -> colorScheme.primaryContainer
+                else -> colorScheme.secondaryContainer
+            }
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        ) {
+            Icon(Icons.Default.Vibration, contentDescription = null)
+            Text(stringResource(test_minimum_vibration))
+        }
+    }
+}
+
+@Composable
 private fun PauseEditor(
     blackSubtitle1: TextStyle,
     editTimelineEventHandlers: EditTimelineEventHandlers?,
@@ -268,7 +342,7 @@ private fun PauseEditor(
     )
     SecText(
         min = RangeConverter.msToS(getMinPause()), max =
-        RangeConverter.msToS(getMaxPause())
+            RangeConverter.msToS(getMaxPause())
     )
     SliderForRange(
         modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
@@ -379,19 +453,20 @@ private fun VibrationParameters(
         min = RangeConverter.msToS(configComponent.minDuration),
         max = RangeConverter.msToS(configComponent.maxDuration)
     )
+
     SliderForRange(
         modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
-        enabled = hasAmplitudeControl,
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
         },
         value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
             configComponent.maxDuration
         ),
-        range = 0f..30f
+        range = 0.1f..30f
     )
 
-    PauseEditor(blackSubtitle1, editTimelineEventHandlers,
+    PauseEditor(
+        blackSubtitle1, editTimelineEventHandlers,
         getMaxPause = { configComponent.maxPause },
         getMinPause = { configComponent.minPause })
 }
@@ -444,7 +519,8 @@ private fun SoundParameters(
         range = 0f..100f
     )
 
-    PauseEditor(blackSubtitle1, editTimelineEventHandlers,
+    PauseEditor(
+        blackSubtitle1, editTimelineEventHandlers,
         getMaxPause = { configComponent.maxPause },
         getMinPause = { configComponent.minPause })
 }

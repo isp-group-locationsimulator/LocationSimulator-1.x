@@ -1,8 +1,7 @@
-package com.ispgr5.locationsimulator.presentation.run
+package com.ispgr5.locationsimulator.service
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.os.*
@@ -13,7 +12,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import kotlinx.coroutines.*
+import com.ispgr5.locationsimulator.service.SoundPlayer
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.joda.time.Instant
 import java.io.File
@@ -53,18 +52,8 @@ class SimulationService : LifecycleService() {
     private var shownNotification: Notification? = null
     private lateinit var soundsDir: String
 
-    private val vibrator by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager =
-                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            Log.d(TAG, "Vibration manager IDs: ${vibratorManager.vibratorIds.joinToString()}")
-            vibratorManager.defaultVibrator.also {
-                Log.d(TAG, "Using vibrator with ID ${it.id}")
-            }
-        } else {
-            @Suppress("DEPRECATION") // Needed for the support of older Android versions.
-            getSystemService(VIBRATOR_SERVICE) as Vibrator
-        }
+    private val vibrationPlayer by lazy {
+        VibrationPlayer(this)
     }
 
     /**
@@ -117,7 +106,7 @@ class SimulationService : LifecycleService() {
         IsPlayingEventBus.postValue(true)
 
         // we need this lock so our service gets not affected by Doze Mode
-        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).let {
+        wakeLock = (getSystemService(POWER_SERVICE) as PowerManager).let {
             it.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "${SimulationService::class.simpleName}::lock"
@@ -305,23 +294,7 @@ class SimulationService : LifecycleService() {
         if (IsPlayingEventBus.value != true) {
             return null
         }
-        //play the vibration depending on the used android version
-        if (Build.VERSION.SDK_INT >= 26) {
-            Log.d(
-                TAG,
-                "Creating Vibration... Duration: ${effect.durationMillis} ms, Strength: ${effect.strength}"
-            )
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(
-                    effect.durationMillis,
-                    effect.strength
-                )
-            )
-        } else {
-            Log.d(TAG, "Creating Vibration... Duration: ${effect.durationMillis} ms")
-            @Suppress("DEPRECATION") // Needed for the support of older Android versions.
-            vibrator.vibrate(effect.durationMillis)
-        }
+        vibrationPlayer.playVibrationEffect(effect)
         return effect.durationMillis
     }
 
@@ -332,7 +305,7 @@ class SimulationService : LifecycleService() {
         EffectTimelineStateBus.postValue(null)
         IsPlayingEventBus.postValue(false)
         soundPlayer.stopPlayback()
-        vibrator.cancel()
+        vibrationPlayer.cancel()
         try {
             //release the wakeLock, since it is no longer needed
             wakeLock?.let {
@@ -370,7 +343,7 @@ class SimulationService : LifecycleService() {
         // to use a specific method to create the notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 notificationChannelId,
                 applicationContext.getString(R.string.service_notification_channel_name),

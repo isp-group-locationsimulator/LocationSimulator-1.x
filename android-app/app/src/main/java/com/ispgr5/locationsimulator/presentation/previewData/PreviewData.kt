@@ -89,6 +89,7 @@ object PreviewData {
     val runScreenPreviewStatePlaying = RunScreenPreviewData.effectTimelinePlayingState
 
     val editTimelineState = EditTimelineState(
+        id = previewConfigurations.first().id!!,
         name = previewConfigurations.first().name,
         description = previewConfigurations.first().description,
         randomOrderPlayback = previewConfigurations.first().randomOrderPlayback,

@@ -6,6 +6,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
  * The State of the Edit Screen
  */
 data class EditTimelineState(
+	val id: Int,
 	val name: String = "",
 	val description: String = "",
 	val randomOrderPlayback: Boolean = false,

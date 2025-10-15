@@ -10,7 +10,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +52,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -72,7 +70,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -88,6 +86,9 @@ import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
+import com.ispgr5.locationsimulator.service.EffectParameters
+import com.ispgr5.locationsimulator.service.EffectTimelineState
+import com.ispgr5.locationsimulator.service.SimulationService
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
