@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
+import androidx.core.net.toUri
 
 
 /**
@@ -65,7 +66,7 @@ data class Configuration(
         privateDirUri: String
     ): Float {
         //Get audio file length
-        val uri: Uri = Uri.parse(privateDirUri + "/" + sound.source)
+        val uri: Uri = (privateDirUri + "/" + sound.source).toUri()
         val mmr = MediaMetadataRetriever()
         mmr.setDataSource(context, uri)
         val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
