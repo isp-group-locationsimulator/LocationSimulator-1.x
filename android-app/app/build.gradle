@@ -65,7 +65,7 @@ android {
 dependencies {
     def composeVersion = "2025.10.00"
     def lifecycleVersion = "2.9.4"
-    def roomVersion = "2.8.2"
+    def roomVersion = "2.8.4"
     // the BOM dependency is responsible for the version of compose we use
     implementation platform("androidx.compose:compose-bom:$composeVersion")
     androidTestImplementation platform("androidx.compose:compose-bom:$composeVersion")
