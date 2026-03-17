@@ -148,7 +148,7 @@ dependencies {
 
     implementation 'com.vdurmont:semver4j:3.1.0'
 
-    implementation 'com.ibm.icu:icu4j:77.1'
+    implementation 'com.ibm.icu:icu4j:78.3'
 
     implementation "com.github.GIGAMOLE:ComposeScrollbars:1.0.4"
 
