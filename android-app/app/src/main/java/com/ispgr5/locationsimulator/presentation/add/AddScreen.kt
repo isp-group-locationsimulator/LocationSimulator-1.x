@@ -7,19 +7,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +25,6 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.addScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
@@ -142,13 +138,17 @@ private fun AddScreenScaffold(
                     modifier = Modifier.testTag(TestTags.ADD_SAVE_BUTTON),
                     enabled = addScreenState.name.isNotBlank()
                 ) {
-                    Icon(Icons.Default.Save, stringResource(id = R.string.edit_Save))
+                    Icon(
+                        painterResource(R.drawable.save_24px),
+                        stringResource(id = R.string.edit_Save))
                     Text(text = stringResource(id = R.string.edit_Save))
                 }
                 Button(
                     onClick = onImportClick,
                 ) {
-                    Icon(Icons.Default.ImportExport, stringResource(id = R.string.edit_Import))
+                    Icon(
+                        painterResource(R.drawable.swap_vert_24px),
+                        stringResource(id = R.string.edit_Import))
                     Text(text = stringResource(id = R.string.edit_Import))
                 }
             }

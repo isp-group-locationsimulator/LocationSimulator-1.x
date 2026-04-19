@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -42,8 +43,8 @@ fun SingleSound(
             Icon(
                 painter = painterResource(
                     when (currentPlayingSoundName) {
-                        soundName -> R.drawable.ic_baseline_stop_24
-                        else -> R.drawable.ic_baseline_play_arrow_24
+                        soundName -> R.drawable.stop_24px
+                        else -> R.drawable.play_arrow_24px
                     }
                 ),
                 contentDescription = null
@@ -72,8 +73,9 @@ fun SingleSound(
             onClick = onDeleteClicked
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                contentDescription = null
+                painter = painterResource(id = R.drawable.delete_24px),
+                contentDescription = null,
+                tint = colorScheme.error.copy(alpha=0.8f)
             )
         }
     }

@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,7 +16,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,12 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.presentation.NavigationArguments
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
@@ -316,7 +310,7 @@ fun EditTimelineTopBar(
                 onClick = onStartClick
             ) {
                 Icon(
-                    Icons.Default.PlayArrow,
+                    painterResource(R.drawable.play_arrow_24px),
                     contentDescription = stringResource(R.string.start)
                 )
             }
@@ -324,7 +318,7 @@ fun EditTimelineTopBar(
                 onClick = onSettingsClick,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_settings_24),
+                    painter = painterResource(id = R.drawable.settings_24px),
                     contentDescription = null,
                 )
 

@@ -3,7 +3,6 @@ package com.ispgr5.locationsimulator.presentation.universalComponents
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,7 +58,7 @@ fun MultiStateTogglePreview() {
 fun <K> MultiStateToggle(
     modifier: Modifier = Modifier,
     stateKeyLabelMap: Map<K, Int>,
-    stateKeyIconMap: Map<K, ImageVector>? = null,
+    stateKeyIconMap: Map<K, Int>? = null,
     selectedOption: K,
     onSelectionChange: (K) -> Unit
 ) {
@@ -103,10 +102,14 @@ fun <K> MultiStateToggle(
                 ) {
                     if (stateKeyIconMap != null) {
                         stateKeyIconMap[key]?.let { icon ->
-                            Icon(icon, null, tint = when(key) {
-                                selectedOption -> colorScheme.onPrimary
-                                else -> colorScheme.onSurface
-                            })
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = null,
+                                tint = when(key) {
+                                    selectedOption -> colorScheme.onPrimary
+                                    else -> colorScheme.onSurface
+                                }
+                            )
                         }
                     }
                     Text(

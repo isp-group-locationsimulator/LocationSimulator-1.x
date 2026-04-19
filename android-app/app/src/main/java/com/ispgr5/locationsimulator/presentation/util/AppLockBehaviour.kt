@@ -3,35 +3,31 @@ package com.ispgr5.locationsimulator.presentation.util
 import android.app.Activity
 import android.os.Build
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockClock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.ispgr5.locationsimulator.R
 
 private const val TAG = "AppLock"
 
 enum class AppLockBehaviour(
-    @StringRes val labelStringRes: Int,
-    @StringRes val explanationStringRes: Int,
-    val icon: ImageVector
+    @param:StringRes val labelStringRes: Int,
+    @param:StringRes val explanationStringRes: Int,
+    @param:DrawableRes val icon: Int
 ) {
     NORMAL_BEHAVIOUR(
         labelStringRes = R.string.normal,
         explanationStringRes = R.string.app_lock_behaviour_normal,
-        icon = Icons.Default.Lock
+        icon = R.drawable.lock_24px
     ),
     ALWAYS_SHOW_WHEN_LOCKED(
         labelStringRes = R.string.always,
         explanationStringRes = R.string.app_lock_behaviour_always_show,
-        icon = Icons.Default.LockOpen
+        icon = R.drawable.lock_open_24px
     ),
     ONLY_SHOW_LOCKED_WHEN_RUNNING(
         labelStringRes = R.string.when_running,
         explanationStringRes = R.string.app_lock_behaviour_only_when_running,
-        icon = Icons.Default.LockClock
+        icon = R.drawable.lock_clock_24px
     )
 }
 

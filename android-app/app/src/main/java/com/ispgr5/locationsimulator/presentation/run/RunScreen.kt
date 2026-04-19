@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PauseCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -96,6 +94,7 @@ import org.joda.time.Instant
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+@Suppress("unused")
 private const val TAG = "RunScreen"
 
 /**
@@ -265,22 +264,23 @@ fun RunScreenContent(
     initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
-    val context = LocalContext.current
     val buttonInteractionSource = remember {
         MutableInteractionSource()
     }
     val viewConfiguration = LocalViewConfiguration.current
+    val stringRunStop = stringResource(R.string.run_stop)
+    val stringLongPressToStop = stringResource(R.string.long_press_to_stop)
 
     val onStopLongClick: () -> Unit = {
         snackbarContentState.value = SnackbarContent(
-            text = context.getString(R.string.run_stop), snackbarDuration = SnackbarDuration.Long
+            text = stringRunStop, snackbarDuration = SnackbarDuration.Short
         )
         onStop()
     }
 
     val onStopShortTap: () -> Unit = {
         snackbarContentState.value = SnackbarContent(
-            text = context.getString(R.string.long_press_to_stop),
+            text = stringLongPressToStop,
             snackbarDuration = SnackbarDuration.Short,
             withDismissAction = true
         )
@@ -314,7 +314,7 @@ fun RunScreenContent(
     ) {
         Text(
             buildAnnotatedString {
-                append(context.getString(R.string.ScreenRun))
+                append(stringResource(R.string.ScreenRun))
                 append(": ")
                 withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
                     append(configuration.name)
@@ -605,8 +605,8 @@ fun EffectPreviewUi(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val drawable = when (effectState) {
-            is EffectParameters.Vibration -> R.drawable.ic_baseline_vibration_24
-            else -> R.drawable.audionouse2
+            is EffectParameters.Vibration -> R.drawable.mobile_vibrate_24px
+            else -> R.drawable.volume_up_24px
         }
         Image(
             modifier = Modifier.height(iconSize),
@@ -777,7 +777,7 @@ fun PausedUi(currentPauseDuration: Long, iconSize: Dp) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            imageVector = Icons.Default.PauseCircleOutline,
+            painterResource(R.drawable.pause_circle_24px),
             contentDescription = null,
             modifier = Modifier.height(iconSize),
             contentScale = ContentScale.FillHeight,
@@ -838,7 +838,7 @@ data class RefRangeValue(
     val value: BigDecimal,
     val lower: BigDecimal,
     val upper: BigDecimal,
-    @StringRes val label: Int,
+    @param:StringRes val label: Int,
     val breakpoints: (BigDecimal) -> Breakpoint,
     val formatValue: (BigDecimal) -> String
 ) {

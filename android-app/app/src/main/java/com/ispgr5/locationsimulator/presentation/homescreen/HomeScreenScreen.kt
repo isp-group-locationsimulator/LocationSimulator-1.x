@@ -1,29 +1,21 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("AssignedValueIsNeverRead")
 
 package com.ispgr5.locationsimulator.presentation.homescreen
 
 import android.os.Build
-import android.os.LocaleList
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockClock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -46,6 +38,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -118,6 +111,14 @@ fun HomeScreenScreen(
     val state = viewModel.state.value
     val context = LocalContext.current
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
+    var renderSnackbarState: (@Composable () -> String)? by remember { mutableStateOf(null) }
+    if (renderSnackbarState != null) {
+        snackbarContent.value = SnackbarContent(
+            text = renderSnackbarState!!(),
+            snackbarDuration = SnackbarDuration.Indefinite,
+            actionLabel = stringResource(android.R.string.ok),
+        )
+    }
 
     HomeScreenScaffold(
         homeScreenState = state,
@@ -148,25 +149,24 @@ fun HomeScreenScreen(
                     val errorStrings = viewModel.whatIsHisErrors(
                         configuration, soundStorageManager
                     )
-                    val snackbarMessage = when (errorStrings.size) {
-                        1 -> context.getString(
-                            R.string.error_single_sound_not_found, errorStrings.first()
-                        )
+                    when (errorStrings.size) {
+                        1 ->
+                            renderSnackbarState = {
+                                stringResource(
+                                    R.string.error_single_sound_not_found,
+                                    errorStrings.first()
+                                )
+                        }
 
                         else -> {
                             val errorText = errorStrings.joinToString(", ") {
                                 "'${it}'"
                             }
-                            context.getString(
-                                R.string.error_multiple_sounds_not_found, errorText
-                            )
+                            renderSnackbarState = {
+                                stringResource(R.string.error_multiple_sounds_not_found, errorText)
+                            }
                         }
                     }
-                    snackbarContent.value = SnackbarContent(
-                        text = snackbarMessage,
-                        snackbarDuration = SnackbarDuration.Indefinite,
-                        actionLabel = context.getString(android.R.string.ok),
-                    )
                 }
 
             }
@@ -226,7 +226,7 @@ fun HomeScreenScaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text(stringResource(R.string.app_settings)) },
-                icon = { Icon(Icons.Filled.Settings, null) },
+                icon = { Icon(painterResource(R.drawable.settings_24px), null) },
                 containerColor = colorScheme.errorContainer,
                 contentColor = colorScheme.onErrorContainer,
                 onClick = {
@@ -345,7 +345,11 @@ fun AppLockBehaviourIndicator(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
-            Icon(behaviour.value.icon, null, tint = colorScheme.onSurface)
+            Icon(
+                painter = painterResource(id = behaviour.value.icon),
+                contentDescription = null,
+                tint = colorScheme.onSurface
+            )
             Text(buildAnnotatedString {
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(stringResource(R.string.app_lock_behaviour))
@@ -467,7 +471,7 @@ private fun AppTopBar(onInfoClick: () -> Unit) {
     ) {
         IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_info_24),
+                painter = painterResource(id = R.drawable.info_24px),
                 contentDescription = stringResource(
                     id = R.string.about
                 )

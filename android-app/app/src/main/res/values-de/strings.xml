@@ -58,7 +58,7 @@
     <string name="infoscreen_license">Lizenz</string>
     <string name="infoscreen_ownLicense">Diese App ist unter der Apache&#160;2.0-Lizenz veröffentlicht.</string>
     <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache&#160;2.0-Lizenz und unter der MIT-Lizenz veröffentlicht wurden.</string>
-    <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
+    <string name="Disclaimer">Diese Anwendung ist nur für Übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
     <string name="share_export_using">Export teilen mit…</string>
     <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten, sorry!</string>
     <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>

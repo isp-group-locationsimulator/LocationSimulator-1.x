@@ -1,6 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
-import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +64,6 @@ import com.ispgr5.locationsimulator.service.EffectParameters
 import com.ispgr5.locationsimulator.service.VibrationPlayer
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joda.time.Instant
@@ -134,7 +129,7 @@ fun EditConfigComponent(
                     },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        painter = painterResource(id = R.drawable.arrow_back_24px),
                         contentDescription = null
                     )
                     Text(stringResource(id = R.string.TimelineMoveLeft))
@@ -154,7 +149,7 @@ fun EditConfigComponent(
                 ) {
                     Text(stringResource(id = R.string.TimelineMoveRight))
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+                        painter = painterResource(id = R.drawable.arrow_forward_24px),
                         contentDescription = null
                     )
                 }
@@ -213,7 +208,7 @@ fun EditConfigComponent(
                     )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.duplicate_icon_24),
+                        painter = painterResource(id = R.drawable.control_point_duplicate_24px),
                         contentDescription = null,
                     )
                 }
@@ -230,7 +225,7 @@ fun EditConfigComponent(
                     )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                        painter = painterResource(id = R.drawable.delete_24px),
                         contentDescription = null,
                     )
                 }
@@ -250,7 +245,10 @@ fun EditConfigComponent(
 
     if (showStrengthNotSupportedDialog) {
         AlertDialog(
-            onDismissRequest = { showStrengthNotSupportedDialog = false },
+            onDismissRequest = {
+                @Suppress("AssignedValueIsNeverRead")
+                showStrengthNotSupportedDialog = false
+            },
             text = {
                 val (_, reasonStringRes) = LocalContext.current.vibratorHasAmplitudeControlAndReason
 
@@ -265,7 +263,10 @@ fun EditConfigComponent(
                 )
             },
             confirmButton = {
-                TextButton(onClick = { showStrengthNotSupportedDialog = false }) {
+                TextButton(onClick = {
+                    @Suppress("AssignedValueIsNeverRead")
+                    showStrengthNotSupportedDialog = false
+                }) {
                     Text(text = stringResource(id = R.string.DialogConfirmation))
                 }
             }
@@ -319,7 +320,10 @@ fun VibrationTestButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
-            Icon(Icons.Default.Vibration, contentDescription = null)
+            Icon(
+                painterResource(R.drawable.mobile_vibrate_24px),
+                contentDescription = null
+            )
             Text(stringResource(test_minimum_vibration))
         }
     }
@@ -419,7 +423,7 @@ private fun VibrationParameters(
                 elevation = null
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_info_24),
+                    painter = painterResource(id = R.drawable.info_24px),
                     contentDescription = null,
                 )
             }

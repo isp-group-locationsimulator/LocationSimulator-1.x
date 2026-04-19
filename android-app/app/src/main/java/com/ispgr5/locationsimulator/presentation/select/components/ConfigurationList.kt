@@ -1,11 +1,25 @@
 package com.ispgr5.locationsimulator.presentation.select.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,8 +33,6 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.previewConfigurations
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
-import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 /**
@@ -98,7 +110,7 @@ fun RowScope.OneConfigurationListMember(
                             )
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
+                                painter = painterResource(id = R.drawable.error_24px),
                                 contentDescription = null,
                                 tint = Color.Red,
                             )
@@ -106,44 +118,41 @@ fun RowScope.OneConfigurationListMember(
                     }
                 }
                 Column(Modifier.weight(1f)) {
-                    Button(
+                    IconButton(
                         onClick = onFavoriteClicked,
-                        contentPadding = PaddingValues(0.dp),
                         enabled = true,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = colorScheme.primary
-                        )
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         //favorite
                         if (isFavorite) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_star_24),
+                                painter = painterResource(id = R.drawable.heart_smile_24px),
                                 contentDescription = null,
-                                tint = colorScheme.secondary,
+                                tint = colorScheme.error.copy(alpha = 0.8f)
                             )
                         } else {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_star_outline_24),
+                                painter = painterResource(id = R.drawable.favorite_24px),
                                 contentDescription = null,
-                                tint = colorScheme.onSurface,
                             )
                         }
                     }
                 }
 
                 Column(Modifier.weight(1f)) {
-                    Icon(
-                        painter = if (isToggled) {
-                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
-                        } else {
-                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24)
-                        },
-                        contentDescription = null
-                    )
+                    IconButton(
+                        onClick = onToggleClicked,
+                        enabled = true,
+                    ) {
+                        Icon(
+                            painter = if (isToggled) {
+                                painterResource(id = R.drawable.keyboard_arrow_down_24px)
+                            } else {
+                                painterResource(id = R.drawable.keyboard_arrow_right_24px)
+                            },
+                            contentDescription = null
+                        )
+                    }
                 }
             }
             //The Information which is shown when toggle is active
@@ -154,86 +163,47 @@ fun RowScope.OneConfigurationListMember(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     //The Select Button
-                    Button(
+                    IconButton(
                         onClick = onSelectClicked,
-                        contentPadding = PaddingValues(0.dp),
                         enabled = !hasErrors,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
                         modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + configuration.name),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = colorScheme.primary,
-                            disabledContainerColor = Color.Transparent,
-                            disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA),
-                        )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
+                            painter = painterResource(id = R.drawable.play_arrow_24px),
                             contentDescription = null,
                             tint = colorScheme.onSurface
                         )
                     }
                     //The Export Button
-                    Button(
+                    IconButton(
                         onClick = onExportClicked,
-                        contentPadding = PaddingValues(0.dp),
                         enabled = !hasErrors,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = colorScheme.primary,
-                            disabledContainerColor = Color.Transparent,
-                            disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA),
-                        )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_ios_share_24),
+                            painter = painterResource(id = R.drawable.mobile_share_24px),
                             contentDescription = null,
                             tint = colorScheme.onSurface
                         )
                     }
                     //The Edit Button
-                    Button(
+                    IconButton(
                         onClick = onEditClicked,
-                        contentPadding = PaddingValues(0.dp),
-                        enabled = true,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
                         modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + configuration.name),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = colorScheme.primary
-                        )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                            painter = painterResource(id = R.drawable.edit_24px),
                             contentDescription = null,
                             tint = colorScheme.onSurface
                         )
                     }
                     //The Duplicate Button
-                    Button(
+                    IconButton(
                         onClick = onDuplicateClicked,
-                        contentPadding = PaddingValues(0.dp),
                         enabled = !hasErrors,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
                         modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_DUPLICTAE_PREFIX + configuration.name),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = colorScheme.onSurface,
-                            disabledContainerColor = Color.Transparent,
-                            disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA),
-                        )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.duplicate_icon_24),
+                            painter = painterResource(id = R.drawable.content_copy_24px),
                             contentDescription = null
                         )
                     }

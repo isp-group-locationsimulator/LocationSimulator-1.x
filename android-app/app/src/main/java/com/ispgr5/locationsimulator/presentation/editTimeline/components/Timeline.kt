@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -108,7 +106,7 @@ fun Timeline(
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        painterResource(R.drawable.add_24px),
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = stringResource(id = R.string.add_configuration_component),
                     )
@@ -170,9 +168,9 @@ fun TimelineItem(
         ) {
             Icon(
                 painter = if (configItem is ConfigComponent.Sound) {
-                    painterResource(id = R.drawable.audionouse2)
+                    painterResource(id = R.drawable.volume_up_24px)
                 } else {
-                    painterResource(id = R.drawable.ic_baseline_vibration_24)
+                    painterResource(id = R.drawable.mobile_vibrate_24px)
                 },
                 contentDescription = null
             )

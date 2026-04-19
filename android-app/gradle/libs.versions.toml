@@ -1,0 +1,117 @@
+[versions]
+activityKtx = "1.13.0"
+agp = "9.1.1"
+androidJoda = "2.14.1"
+appcompat = "1.7.1"
+compose-bom = "2026.03.01"
+composescrollbars = "1.0.4"
+core-ktx = "1.18.0"
+core-testing = "2.2.0"
+dagger = "2.59.2"
+dagger-hilt = "2.59.2"
+espressoCore = "3.7.0"
+github-ben-manes-versions = "0.53.0"
+google-devtools-ksp = "2.3.6"
+gradle = "9.1.1"
+guava = "33.6.0-jre"
+hilt-navigation-compose = "1.3.0"
+icu4j = "78.3"
+json = "20251224"
+junit = "1.3.0"
+junitVersion = "4.13.2"
+kotlin = "2.3.20"
+kotlinxCoroutines = "1.10.2"
+kotlinxSerializationJson = "1.11.0"
+lifecycle = "2.10.0"
+mockk = "1.14.9"
+mockwebserver = "5.3.2"
+navigation-compose = "2.9.7"
+preference-ktx = "1.2.1"
+room = "2.8.4"
+runtimeLivedata = "1.10.6"
+screengrab = "2.1.1"
+semver4j = "3.1.0"
+test = "1.7.0"
+truth = "1.4.5"
+ui = "1.10.6"
+uiVersion = "1.10.6"
+
+[libraries]
+activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+android-activity-compose = { group = "androidx.activity", name = "activity-compose" }
+android-joda = { group = "net.danlew", name = "android.joda", version.ref = "androidJoda" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material = { group = "androidx.compose.material", name = "material" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+composescrollbars = { group = "com.github.GIGAMOLE", name = "ComposeScrollbars", version.ref = "composescrollbars" }
+core = { group = "androidx.test", name = "core", version.ref = "test" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "core-testing" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
+hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "dagger" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "dagger" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "dagger" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+icu4j = { group = "com.ibm.icu", name = "icu4j", version.ref = "icu4j" }
+json = { group = "org.json", name = "json", version.ref = "json" }
+junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
+preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference-ktx" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+runner = { group = "androidx.test", name = "runner", version.ref = "test" }
+runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+screengrab = { group = "tools.fastlane", name = "screengrab", version.ref = "screengrab" }
+semver4j = { group = "com.vdurmont", name = "semver4j", version.ref = "semver4j" }
+test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "test" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "ui" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "ui" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "uiVersion" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
+github-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "github-ben-manes-versions" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "google-devtools-ksp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+[bundles]
+compose = [
+    "android-activity-compose",
+    "androidx-compose-foundation",
+    "androidx-compose-material",
+    "androidx-compose-material3",
+    "androidx-compose-ui",
+    "androidx-compose-ui-graphics",
+    "androidx-compose-ui-text-google-fonts",
+    "androidx-compose-ui-tooling",
+    "androidx-compose-ui-tooling-preview",
+]

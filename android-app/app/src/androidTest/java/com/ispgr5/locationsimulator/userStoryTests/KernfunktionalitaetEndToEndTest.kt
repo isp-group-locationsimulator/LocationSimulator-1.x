@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
@@ -72,7 +73,9 @@ class KernfunktionalitaetEndToEndTest {
                         appLockBehaviour = appLockBehaviour,
                         sheetState = sheetState,
                         showBottomSheet = false,
-                        onToggleSheet = {}
+                        onToggleSheet = {},
+                        currentLocaleList = LocaleListCompat.getEmptyLocaleList(),
+                        setLocaleFromString = {}
                     )
                 }
             }

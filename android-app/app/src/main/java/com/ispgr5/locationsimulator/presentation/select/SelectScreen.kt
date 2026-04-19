@@ -3,15 +3,37 @@ package com.ispgr5.locationsimulator.presentation.select
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,10 +57,9 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewStateDelete
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
-import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
 import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -64,6 +85,8 @@ fun SelectScreen(
     val selectScreenState = viewModel.state.value
     val context = LocalContext.current
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent)
+    val stringNotFound = stringResource(R.string.not_found)
+    val stringOk = stringResource(android.R.string.ok)
 
     SelectScreenScaffold(
         selectScreenState = selectScreenState,
@@ -120,8 +143,8 @@ fun SelectScreen(
                 configuration = configuration, soundStorageManager = soundStorageManager
             )) {
                 snackbarContent.value = SnackbarContent(
-                    text = "$error ${context.getString(R.string.not_found)}",
-                    actionLabel = context.getString(android.R.string.ok),
+                    text = "$error $stringNotFound",
+                    actionLabel = stringOk,
                     snackbarDuration = SnackbarDuration.Indefinite
                 )
             }
@@ -187,7 +210,7 @@ private fun ConfigurationList(
                                 onClick = { onSelectForDeletion(configuration) },
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                                    painter = painterResource(id = R.drawable.delete_24px),
                                     contentDescription = null,
                                     tint = colorScheme.onBackground,
                                 )
@@ -240,7 +263,7 @@ private fun ConfigurationList(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Cancel,
+                                        painterResource(R.drawable.cancel_24px),
                                         contentDescription = stringResource(id = R.string.delete_configuration),
                                         tint = colorScheme.onError.copy(alpha = 0.8f)
                                     )
@@ -271,7 +294,7 @@ private fun AddButton(onClickAddScreenButton: () -> Unit) {
             .testTag(TestTags.SELECT_ADD_BUTTON)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_add_24), contentDescription = null
+            painter = painterResource(id = R.drawable.add_24px), contentDescription = null
         )
         Text(stringResource(R.string.new_configuration), fontSize = 18.sp)
     }
@@ -293,14 +316,14 @@ private fun SelectScreenTopBar(
                 when {
                     isInDeleteMode -> {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_check_24),
+                            painter = painterResource(id = R.drawable.check_24px),
                             contentDescription = null
                         )
                     }
 
                     else -> {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                            painter = painterResource(id = R.drawable.delete_24px),
                             contentDescription = null
                         )
                     }

@@ -1,10 +1,7 @@
 package com.ispgr5.locationsimulator.ui.theme
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BrightnessAuto
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.ispgr5.locationsimulator.R
 
 /**
@@ -15,8 +12,11 @@ data class ThemeState (
     val useDynamicColor: Boolean = false
 )
 
-enum class ThemeType(val labelStringRes: Int, val icon: ImageVector) {
-    LIGHT(R.string.light, Icons.Default.LightMode),
-    AUTO(R.string.auto, Icons.Default.BrightnessAuto),
-    DARK(R.string.dark, Icons.Default.DarkMode)
+enum class ThemeType(
+    @param:StringRes val labelStringRes: Int,
+    @param:DrawableRes val icon: Int
+) {
+    LIGHT(R.string.light, R.drawable.light_mode_24px),
+    AUTO(R.string.auto, R.drawable.brightness_auto_24px),
+    DARK(R.string.dark, R.drawable.dark_mode_24px)
 }

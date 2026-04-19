@@ -270,7 +270,7 @@ fun RowScope.TimerFlipper(
             .padding(vertical = 4.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
+            painter = painterResource(id = R.drawable.keyboard_double_arrow_up_24px),
             contentDescription = null,
         )
     }
@@ -298,7 +298,7 @@ fun RowScope.TimerFlipper(
             .padding(vertical = 4.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
+            painter = painterResource(id = R.drawable.keyboard_double_arrow_down_24px),
             contentDescription = null
         )
     }
@@ -316,7 +316,7 @@ fun calculateTimerValue(value: String): Long {
         } else if (res > 59) {
             res = 59
         }
-    } catch (e: NumberFormatException) {
+    } catch (_: NumberFormatException) {
         res = 0
     }
     return res
