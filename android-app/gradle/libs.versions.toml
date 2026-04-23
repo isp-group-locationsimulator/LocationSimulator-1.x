@@ -33,7 +33,7 @@ screengrab = "2.1.1"
 semver4j = "3.1.0"
 test = "1.7.0"
 truth = "1.4.5"
-ui = "1.10.6"
+ui = "1.11.0"
 uiVersion = "1.10.6"
 
 [libraries]
