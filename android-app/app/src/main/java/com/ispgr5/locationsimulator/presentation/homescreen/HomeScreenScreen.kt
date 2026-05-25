@@ -524,3 +524,48 @@ fun HomeScreenPreview() {
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@AppPreview
+fun HomeScreenSheetShownPreview() {
+    val state by remember {
+        mutableStateOf(
+            HomeScreenState(
+                favoriteConfigurations = PreviewData.previewConfigurations.filter { it.isFavorite },
+                configurationsWithErrors = emptyList()
+            )
+        )
+    }
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
+    val themeState = remember {
+        mutableStateOf(PreviewData.themePreviewState)
+    }
+    val appLockBehaviour = remember {
+        mutableStateOf(AppLockBehaviour.NORMAL_BEHAVIOUR)
+    }
+    val sheetState = rememberModalBottomSheetState()
+    LocationSimulatorTheme {
+        HomeScreenScaffold(
+            homeScreenState = state,
+            appTheme = themeState,
+            snackbarHostState = snackbarHostState,
+            onInfoClick = {},
+            onSelectProfile = {},
+            onSelectFavourite = {},
+            onSelectTheme = {},
+            checkBatteryOptimizationStatus = { false },
+            onLaunchBatteryOptimizerDisable = {},
+            appLockBehaviour = appLockBehaviour,
+            onSelectAppLockBehaviour = {},
+            onToggleSheet = {},
+            showBottomSheet = true,
+            sheetState = sheetState,
+            currentLocaleList = LocaleListCompat.getDefault(),
+            setLocaleFromString = {}
+        )
+    }
+}
