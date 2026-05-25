@@ -27,7 +27,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormatterBuilder
@@ -481,7 +480,7 @@ class ConfigurationStorageManager(
     }
 }
 
-class LoadException(@StringRes val messageStringRes: Int, vararg formatArgs: String) :
+class LoadException(@param:StringRes val messageStringRes: Int, vararg formatArgs: String) :
     Exception() {
     val formatMessage: (Context) -> String = { context ->
         context.getString(messageStringRes).format(*formatArgs)
