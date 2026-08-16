@@ -1,7 +1,7 @@
 [versions]
 activityKtx = "1.13.0"
 agp = "9.2.1"
-androidJoda = "2.14.2"
+androidJoda = "2.14.2.1"
 appcompat = "1.7.1"
 compose-bom = "2026.05.01"
 composescrollbars = "1.0.4"
